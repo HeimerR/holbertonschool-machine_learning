@@ -29,7 +29,7 @@ def cat_matrices(mat1, mat2, axis=0):
     """ concatenates two matrices along a specific axis """
     shape1 = shape(mat1)
     shape2 = shape(mat2)
-    if len(shape1) != len(shape2):
+    if len(shape1) != len(shape2) or axis >= len(shape1):
         return None
     level = 0
     cat = inception(mat1, mat2, axis, level)
