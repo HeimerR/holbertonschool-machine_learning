@@ -12,7 +12,7 @@ def inception(mat1, mat2, axis, level):
         if type(mat1[i]) == list:
             cat.append(inception(mat1[i], mat2[i], axis, level + 1))
         else:
-            cat.append(mat1 + mat2)
+            cat = mat1 + mat2
     return cat
 
 
