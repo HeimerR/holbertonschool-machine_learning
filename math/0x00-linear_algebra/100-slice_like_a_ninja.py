@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """ Slice Like A Ninja """
-import numpy as np
 
 
 def np_slice(matrix, axes={}):
