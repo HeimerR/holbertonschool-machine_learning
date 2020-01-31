@@ -33,17 +33,15 @@ ax1.autoscale(axis='x', tight=True)
 
 ax2 = plt.subplot(322)
 ax2.scatter(x1, y1, c='magenta')
-#ax2.set(xlabel='Height (in)', ylabel='Weight (lbs)')
 ax2.set_xlabel('Height (in)', fontsize='x-small')
 ax2.set_ylabel('Weight (lbs)', fontsize='x-small')
 ax2.set_title("Men's Height vs Weight", fontsize='x-small')
 
 ax3 = plt.subplot(323)
-#ax3.set(xlabel='Time (years)', ylabel='Fraction Remaining')
 ax3.set_xlabel('Time (years)', fontsize='x-small')
 ax3.set_ylabel('Fraction Remaining', fontsize='x-small')
 ax3.set_title('Exponential Decay of C-14', fontsize='x-small')
-ax3.labelsize='x-small'
+ax3.labelsize = 'x-small'
 ax3.set(yscale='log', xlim=(0, 28650))
 ax3.plot(x2, y2)
 
@@ -56,12 +54,11 @@ ax4.plot(x3, y31, 'r--', x3, y32, 'g')
 ax4.legend(['C-14', 'Ra-226'])
 
 ax5 = plt.subplot(313)
-#ax5.set(xlabel='Grades', ylabel='Number of Students')
 ax5.set_xlabel('Grades', fontsize='x-small')
 ax5.set_ylabel('Number of Students', fontsize='x-small')
 ax5.hist(student_grades, edgecolor='black', bins=range(0, 110, 10))
 ax5.set_title('Project A', fontsize='x-small')
-ax5.labelsize='x-small'
+ax5.labelsize = 'x-small'
 ax5.set_xticks(np.arange(0, 100, step=10))
 ax5.set(xlim=(0, 100), ylim=(0, 30))
 
