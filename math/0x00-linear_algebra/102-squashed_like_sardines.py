@@ -9,10 +9,7 @@ def inception(mat1, mat2, axis, level):
         cat = mat1 + mat2
         return cat
     for i in range(len(mat1)):
-        if type(mat1[i]) == list:
-            cat.append(inception(mat1[i], mat2[i], axis, level + 1))
-        else:
-            cat = mat1 + mat2
+        cat.append(inception(mat1[i], mat2[i], axis, level + 1))
     return cat
 
 
@@ -29,7 +26,9 @@ def cat_matrices(mat1, mat2, axis=0):
     """ concatenates two matrices along a specific axis """
     shape1 = shape(mat1)
     shape2 = shape(mat2)
-    if len(shape1) != len(shape2) or axis >= len(shape1):
+    shape1.pop(axis)
+    shape2.pop(axis)
+    if shape1 != shape2 or axis >= len(shape1) + 1:
         return None
     level = 0
     cat = inception(mat1, mat2, axis, level)
