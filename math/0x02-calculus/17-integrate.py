@@ -8,6 +8,8 @@ def poly_integral(poly, C=0):
         return None
     if len(poly) == 0:
         return None
+    if poly == [0]:
+        return [C]
     if not all(isinstance(n, (int, float)) for n in poly):
         return None
     integral = [float(C)] + [poly[i] / (i + 1) for i in range(len(poly))]
