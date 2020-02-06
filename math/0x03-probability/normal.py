@@ -24,6 +24,12 @@ class Normal:
                            (data[i] - self.mean) ** 2 for i in
                            range(len(data))])) / len(data)) ** 0.5
 
+    def z_score(self, x):
+        return (x - self.mean) / self.stddev
+
+    def x_value(self, z):
+        return z * self.stddev + self.mean
+
     def pdf(self, x):
         """ Calculates the value of the PDF """
         if x < 0:
