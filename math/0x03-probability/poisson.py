@@ -8,7 +8,6 @@ class Poisson:
         """Initialization of the poisson class"""
         self.lambtha = float(lambtha)
         if data is None:
-            data = lambtha
             if lambtha < 0:
                 raise ValueError("lambtha must be a positive value")
         else:
