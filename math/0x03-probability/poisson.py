@@ -35,6 +35,6 @@ class Poisson:
         """ Calculates the value of the CDF """
         if type(k) != int:
             k = int(k)
-        if k <= 0:
+        if k < 0:
             return 0
         return sum([self.pmf(i) for i in range(1, k + 1)])
