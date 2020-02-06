@@ -37,4 +37,8 @@ class Poisson:
             k = int(k)
         if k < 0:
             return 0
-        return sum([self.pmf(i) for i in range(1, k + 1)])
+        fac = [1]
+        for i in range(1, k + 1):
+            fac.append(fac[i - 1] * i)
+        return (Poisson.e ** (self.lambtha * (-1))) * sum([
+                (self.lambtha ** i) / fac[i] for i in range(0, k + 1)])
