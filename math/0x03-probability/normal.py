@@ -6,6 +6,7 @@ class Normal:
     """ exponential class """
 
     e = 2.7182818285
+    pi = 3.1415926536
 
     def __init__(self, data=None, mean=0., stddev=1.):
         """Initialization of the normal class"""
@@ -34,9 +35,9 @@ class Normal:
 
     def pdf(self, x):
         """ Calculates the value of the PDF """
-        if x < 0:
-            return 0
-        return self.lambtha * (Exponential.e ** (self.lambtha * (-1) * x))
+        tmp = 1 / (self.stddev * ((2 * Normal.pi)) ** 0.5)
+        tmp2 = Normal.e ** (-0.5 * ((x - self.mean) / self.stddev) ** 2)
+        return tmp * tmp2
 
     def cdf(self, x):
         """ Calculates the value of the CDF """
