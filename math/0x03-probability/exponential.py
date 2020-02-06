@@ -20,16 +20,11 @@ class Exponential:
                 raise ValueError("data must contain multiple values")
             self.lambtha = float(len(data) / sum(data))
 
-    def pmf(self, k):
+    def pdf(self, x):
         """ Calculates the value of the PMF """
-        if type(k) != int:
-            k = int(k)
-        if k <= 0:
+        if x == 0:
             return 0
-        fac = 1
-        for i in range(1, k + 1):
-            fac *= i
-        return ((self.lambtha ** k) * Poisson.e ** (self.lambtha * (-1))) / fac
+        return self.lambtha * (Exponential.e ** (self.lambtha * (-1) * x))
 
     def cdf(self, k):
         """ Calculates the value of the CDF """
