@@ -26,10 +26,8 @@ class Exponential:
             return 0
         return self.lambtha * (Exponential.e ** (self.lambtha * (-1) * x))
 
-    def cdf(self, k):
+    def cdf(self, x):
         """ Calculates the value of the CDF """
-        if type(k) != int:
-            k = int(k)
-        if k < 0:
+        if x < 0:
             return 0
-        return sum([self.pmf(i) for i in range(1, k + 1)])
+        return 1 - (Exponential.e ** (self.lambtha * -1 * x))
