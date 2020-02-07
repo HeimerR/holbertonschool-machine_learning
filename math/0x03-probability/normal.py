@@ -41,8 +41,9 @@ class Normal:
 
     def cdf(self, x):
         """ Calculates the value of the CDF """
+        x2 = (x - self.mean) / ((2 ** 0.5) * self.stddev)
         erf1 = 2 / (Normal.pi ** 0.5)
-        erf2 = (x - ((x ** 3) / 3) + ((x ** 5) / 10) -
-                ((x ** 7) / 42) + ((x ** 9) / 216))
+        erf2 = (x2 - ((x2 ** 3) / 3) + ((x2 ** 5) / 10) -
+                ((x2 ** 7) / 42) + ((x2 ** 9) / 216))
         erf = erf1 * erf2
-        return 0.5 * (1 + erf * ((x - self.mean) / (self.stddev * (2 ** 0.5))))
+        return (1 + erf) / 2
