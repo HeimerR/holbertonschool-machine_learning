@@ -31,6 +31,8 @@ class Binomial:
 
     def pmf(self, k):
         """ Calculates the value of the PMF """
+        if k > self.n or k <= 0:
+            return 0
         n_fact = 1
         for i in range(1, self.n + 1):
             n_fact *= i
