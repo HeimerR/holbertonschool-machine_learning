@@ -32,7 +32,7 @@ class Binomial:
     def pmf(self, k):
         """ Calculates the value of the PMF """
         n_fact = 1
-        for i in range(1, n + 1):
+        for i in range(1, self.n + 1):
             n_fact *= i
         k_fact = 1
         for j in range(1, k + 1):
@@ -41,7 +41,7 @@ class Binomial:
         for m in range(1, (self.n - k) + 1):
             tmp_fact *= m
         tmp2 = n_fact / (k_fact * tmp_fact)
-        return tmp2 * ((self.p ** k) * ((1 - p) ** (self.n - k)))
+        return tmp2 * ((self.p ** k) * ((1 - self.p) ** (self.n - k)))
 
     def cdf(self, k):
         """ Calculates the value of the CDF """
