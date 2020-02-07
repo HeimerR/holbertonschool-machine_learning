@@ -22,8 +22,8 @@ class Binomial:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            self.p = float(sum(data) / len(data))
-            self.n = float(len(data))
+            self.p = float((sum(data) * 2) / (len(data) ** 2))
+            self.n = float(len(data)) / 2
 
     def pmf(self, k):
         """ Calculates the value of the PMF """
