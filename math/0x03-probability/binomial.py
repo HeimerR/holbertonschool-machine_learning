@@ -15,15 +15,19 @@ class Binomial:
                 raise ValueError("n must be a positive value")
             if p < 0 or p > 1:
                 raise ValueError("p must be greater than 0 and less than 1")
-            self.n = float(n)
+            self.n = int(n)
             self.p = float(p)
         else:
             if type(data) != list:
                 raise TypeError("data must be a list")
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            self.p = float((sum(data) * 2) / (len(data) ** 2))
-            self.n = float(len(data)) / 2
+            mean = float(sum(data) / len(data))
+            stddev = (sum([(data[i] - mean) ** 2 for i in range(len(data))]) /
+                      len(data))
+            self.p = 1 - (stddev / mean)
+            self.n = int(round(mean / self.p))
+            self.p = mean / self.n
 
     def pmf(self, k):
         """ Calculates the value of the PMF """
