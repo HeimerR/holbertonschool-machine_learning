@@ -50,7 +50,7 @@ class Binomial:
     def cdf(self, k):
         """ Calculates the value of the CDF """
         if type(k) != int:
-            int(k)
+            k = int(k)
         if k < 0:
             return 0
         return sum([self.pmf(i) for i in range(k + 1)])
