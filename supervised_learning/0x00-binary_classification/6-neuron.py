@@ -39,8 +39,9 @@ class Neuron:
 
     def cost(self, Y, A):
         """ cost function """
-        C = np.sum(Y * np.log(A) + (1-Y) * (np.log(1.0000001 - A)))
-        return (-1/(Y.shape[1])) * C
+        m = Y.shape[1]
+        C = -np.sum(Y * np.log(A) + (1 - Y) * (np.log(1.0000001 - A))) / m
+        return C
 
     def evaluate(self, X, Y):
         """ evaluate output """
@@ -53,7 +54,8 @@ class Neuron:
         m = Y.shape[1]
         dw = np.matmul(X, dz.T) / m
         db = np.sum(dz) / m
-        self.__W - alpha * dw
+        print(self.__W.shape)
+        self.__W = self.__W - alpha * dw.T
         self.__b = self.__b - alpha * db
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
@@ -67,7 +69,6 @@ class Neuron:
         if alpha <= 0:
             raise ValueError("alpha must be positive")
         for i in range(iterations):
-            print(i)
-            self.evaluate(X, Y)
+            self.forward_prop(X)
             self.gradient_descent(X, Y, self.__A, alpha)
         return self.evaluate(X, Y)
