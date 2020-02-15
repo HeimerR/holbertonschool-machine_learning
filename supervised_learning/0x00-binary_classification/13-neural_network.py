@@ -80,7 +80,7 @@ class NeuralNetwork:
         db2 = np.sum(dz2, axis=1, keepdims=True) / m
 
         dz1a = np.matmul(self.__W2.T, dz2)
-        dz1b = self.__A1 * (1 - self.__A1)
+        dz1b = A1 * (1 - A1)
         dz1 = dz1a * dz1b
         dw1 = np.matmul(dz1, X.T) / m
         db1 = np.sum(dz1, axis=1, keepdims=True) / m
