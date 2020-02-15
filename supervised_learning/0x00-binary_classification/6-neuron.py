@@ -45,8 +45,8 @@ class Neuron:
 
     def evaluate(self, X, Y):
         """ evaluate output """
-        A = self.forward_prop(X)
-        return np.where(self.__A >= 0.5, 1, 0), self.cost(Y, A)
+        self.forward_prop(X)
+        return np.where(self.__A >= 0.5, 1, 0), self.cost(Y, self.__A)
 
     def gradient_descent(self, X, Y, A, alpha=0.05):
         """ Calculates one pass of gradient descent on the neuron """
