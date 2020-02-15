@@ -78,13 +78,13 @@ class NeuralNetwork:
         m = A1.shape[1]
         dw2 = np.matmul(A1, dz2.T) / m
         db2 = np.sum(dz2, axis=1, keepdims=True) / m
-        self.__W2 = self.__W2 - (alpha * dw2).T
-        self.__b2 = self.__b2 - alpha * db2
 
         dz1a = np.matmul(self.__W2.T, dz2)
         dz1b = self.__A1 * (1 - self.__A1)
         dz1 = dz1a * dz1b
         dw1 = np.matmul(dz1, X.T) / m
         db1 = np.sum(dz1, axis=1, keepdims=True) / m
-        self.__W1 = self.__W1 - (alpha * dw1)
+        self.__W2 = self.__W2 - (alpha * dw2).T
+        self.__b2 = self.__b2 - alpha * db2
         self.__b1 = self.__b1 - alpha * db1
+        self.__W1 = self.__W1 - (alpha * dw1)
