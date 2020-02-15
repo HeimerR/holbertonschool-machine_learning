@@ -39,10 +39,10 @@ class Neuron:
 
     def cost(self, Y, A):
         """ cost function """
-        C = np.sum(Y * np.log(A) + (1-Y) * (np.log(1.0000001 - A)))
-        return (-1/(Y.shape[1])) * C
+        C = np.sum(Y * np.log(A) + (1 - Y) * (np.log(1.0000001 - A)))
+        return -C/Y.shape[1]
 
     def evaluate(self, X, Y):
         """ evaluate output """
         self.forward_prop(X)
-        return np.where(self.__A > 0.5, 1, 0), self.cost(Y, self.__A)
+        return np.where(self.__A >= 0.5, 1, 0), self.cost(Y, self.__A)
