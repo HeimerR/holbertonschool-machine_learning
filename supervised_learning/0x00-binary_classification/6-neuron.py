@@ -12,7 +12,7 @@ class Neuron:
         if nx < 1:
             raise ValueError('nx must be a positive integer')
         self.nx = nx
-        self.__W = np.random.normal(size=self.nx).reshape(nx, 1).T
+        self.__W = np.random.randn(nx).reshape(1, nx)
         self.__b = 0
         self.__A = 0
 
@@ -45,8 +45,8 @@ class Neuron:
 
     def evaluate(self, X, Y):
         """ evaluate output """
-        self.forward_prop(X)
-        return np.where(self.__A >= 0.5, 1, 0), self.cost(Y, self.__A)
+        A = self.forward_prop(X)
+        return np.where(self.__A >= 0.5, 1, 0), self.cost(Y, A)
 
     def gradient_descent(self, X, Y, A, alpha=0.05):
         """ Calculates one pass of gradient descent on the neuron """
@@ -67,7 +67,8 @@ class Neuron:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        for i in range(iterations):
+        for i in range(iterations + 1):
             self.forward_prop(X)
-            self.gradient_descent(X, Y, self.__A, alpha)
+            if i < iterations:
+                self.gradient_descent(X, Y, self.__A, alpha)
         return self.evaluate(X, Y)
