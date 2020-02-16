@@ -20,8 +20,13 @@ class DeepNeuralNetwork:
         self.L = len(layers)
         self.cache = {}
         self.weights = {}
-        for l in range(len(layers)):
-            self.weights["b" + str(l + 1)] = np.zeros((layers[l], 1))
-            self.weights["W" + str(l + 1)] = (np.random.randn(layers[l],
-                                              layers[l-1])
-                                              * np.sqrt(2/layers[l-1]))
+        for ly in range(len(layers)):
+            self.weights["b" + str(ly + 1)] = np.zeros((layers[ly], 1))
+            if ly == 0:
+                self.weights["W" + str(ly + 1)] = (np.random.randn(layers[ly],
+                                                   nx)
+                                                   * np.sqrt(2/nx))
+            else:
+                self.weights["W" + str(ly + 1)] = (np.random.randn(layers[ly],
+                                                   layers[ly-1])
+                                                   * np.sqrt(2/layers[ly-1]))
