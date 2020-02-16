@@ -23,11 +23,9 @@ class DeepNeuralNetwork:
         for ly in range(len(layers)):
             self.weights["b" + str(ly + 1)] = np.zeros((layers[ly], 1))
             if ly == 0:
-                self.__weights["W" + str(ly + 1)] = (np.random.randn
-                                                     (layers[ly], nx) *
-                                                     np.sqrt(2/nx))
+                heetal = np.random.randn(layers[ly], nx) * np.sqrt(2/nx)
+                self.weights["W" + str(ly + 1)] = heetal
             else:
-                self.__weights["W" + str(ly + 1)] = (np.random.randn
-                                                     (layers[ly],
-                                                      layers[ly-1]) *
-                                                     np.sqrt(2/layers[ly-1]))
+                factor = np.sqrt(2/layers[ly - 1])
+                heetal = np.random.randn(layers[ly], layers[ly - 1]) * factor
+                self.weights["W" + str(ly + 1)] = heetal
