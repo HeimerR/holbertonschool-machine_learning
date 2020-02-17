@@ -20,3 +20,12 @@ class DeepNeuralNetwork:
         self.L = len(layers)
         self.cache = {}
         self.weights = {}
+        for ly in range(self.L):
+            self.weights["b"+str(ly+1)] = np.zeros((layers[ly], 1))
+            if ly == 0:
+                heetal = np.random.randn(layers[ly], nx) * np.sqrt(2/nx)
+                self.weights["W"+str(ly+1)] = heetal
+            else:
+                factor = np.sqrt(2/layers[ly-1])
+                heetal = np.random.randn(layers[ly], layers[ly-1]) * factor
+                self.weights["W" + str(ly+1)] = heetal
