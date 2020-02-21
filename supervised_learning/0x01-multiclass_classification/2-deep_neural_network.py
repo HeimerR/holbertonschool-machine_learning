@@ -122,11 +122,12 @@ class DeepNeuralNetwork:
                     print("Cost after {} iterations: {}".format(i, cost))
             if i < iterations:
                 self.gradient_descent(Y, self.__cache, alpha)
-        plt.plot(np.array(steps), np.array(costs))
-        plt.xlabel('iteration')
-        plt.ylabel('cost')
-        plt.suptitle("Training Cost")
-        plt.show()
+        if graph is True:
+            plt.plot(np.array(steps), np.array(costs))
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.suptitle("Training Cost")
+            plt.show()
         return self.evaluate(X, Y)
 
     def save(self, filename):
