@@ -139,6 +139,9 @@ class DeepNeuralNetwork:
     @staticmethod
     def load(filename):
         """ Loads a pickled DeepNeuralNetwork object """
-        with open(filename, 'rb') as f:
-            obj = pickle.load(f)
-        return obj
+        try:
+            with open(filename, 'rb') as f:
+                obj = pickle.load(f)
+            return obj
+        except FileNotFoundError:
+            return None
