@@ -87,9 +87,10 @@ class Neuron:
                     print("Cost after {} iterations: {}".format(i, cost))
             if i < iterations:
                 self.gradient_descent(X, Y, self.__A, alpha)
-        plt.plot(np.array(steps), np.array(costs))
-        plt.xlabel('iteration')
-        plt.ylabel('cost')
-        plt.suptitle("Training Cost")
-        plt.show()
+        if graph is True:
+            plt.plot(np.array(steps), np.array(costs))
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.suptitle("Training Cost")
+            plt.show()
         return self.evaluate(X, Y)

@@ -90,7 +90,8 @@ class NeuralNetwork:
         self.__W1 = self.__W1 - (alpha * dw1)
         self.__b1 = self.__b1 - alpha * db1
 
-    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True, graph=True, step=100):
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
+              graph=True, step=100):
         """ Trains the neural network """
         if type(iterations) != int:
             raise TypeError("iterations must be an integer")
@@ -118,9 +119,10 @@ class NeuralNetwork:
                     print("Cost after {} iterations: {}".format(i, cost))
             if i < iterations:
                 self.gradient_descent(X, Y, self.__A1, self.__A2, alpha)
-        plt.plot(np.array(steps), np.array(costs))
-        plt.xlabel('iteration')
-        plt.ylabel('cost')
-        plt.suptitle("Training Cost")
-        plt.show()
+        if graph is True:
+            plt.plot(np.array(steps), np.array(costs))
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.suptitle("Training Cost")
+            plt.show()
         return self.evaluate(X, Y)
