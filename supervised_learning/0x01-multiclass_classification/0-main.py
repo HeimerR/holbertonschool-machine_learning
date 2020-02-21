@@ -8,5 +8,5 @@ oh_encode = __import__('0-one_hot_encode').one_hot_encode
 lib = np.load('../data/MNIST.npz')
 Y = lib['Y_train'][:10]
 print(Y)
-Y_one_hot = oh_encode(Y, 10)
+Y_one_hot = oh_encode(Y, "a")
 print(Y_one_hot)
