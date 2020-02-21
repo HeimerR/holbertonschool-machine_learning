@@ -54,25 +54,25 @@ class DeepNeuralNetwork:
             Zp = np.matmul(self.__weights["W"+str(ly+1)],
                            self.__cache["A"+str(ly)])
             Z = Zp + self.__weights["b"+str(ly+1)]
-            t = np.exp(z)
-            self.__cache["A"+str(ly+1)] = t/np.sum(t)
+            if ly == self.__L - 1:
+                t = np.exp(Z)
+                self.__cache["A"+str(ly+1)] = (t/np.sum(t, axis=0,
+                                               keepdims=True))
+            else:
+                self.__cache["A"+str(ly+1)] = 1/(1+np.exp(-Z))
 
         return self.__cache["A"+str(self.__L)], self.__cache
 
     def cost(self, Y, A):
         """ Calculates the cost of the model using logistic regression """
-        C =  np.sum(Y * np.log(A))
-        #C = np.sum(Y * np.log(A) + (1-Y) * (np.log(1.0000001 - A)))
-        #return (-1/(Y.shape[1])) * C
-        return C
+        C = np.sum(Y * np.log(A))
+        return (-1/(Y.shape[1])) * C
 
     def evaluate(self, X, Y):
         """ Evaluates the neural network’s predictions """
         self.forward_prop(X)
-
-        np.amax(self.__cache["A"+str(self.__L)], axis=0)
-
-        return (np.where(self.__cache["A"+str(self.__L)] >= 0.5, 1, 0),
+        tmp = np.amax(self.__cache["A"+str(self.__L)], axis=0)
+        return (np.where(self.__cache["A"+str(self.__L)] == tmp, 1, 0),
                 self.cost(Y, self.__cache["A"+str(self.__L)]))
 
     def gradient_descent(self, Y, cache, alpha=0.05):
@@ -128,11 +128,12 @@ class DeepNeuralNetwork:
                     print("Cost after {} iterations: {}".format(i, cost))
             if i < iterations:
                 self.gradient_descent(Y, self.__cache, alpha)
-        plt.plot(np.array(steps), np.array(costs))
-        plt.xlabel('iteration')
-        plt.ylabel('cost')
-        plt.suptitle("Training Cost")
-        plt.show()
+        if graph is True:
+            plt.plot(np.array(steps), np.array(costs))
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.suptitle("Training Cost")
+            plt.show()
         return self.evaluate(X, Y)
 
     def save(self, filename):
@@ -145,6 +146,9 @@ class DeepNeuralNetwork:
     @staticmethod
     def load(filename):
         """ Loads a pickled DeepNeuralNetwork object """
-        with open(filename, 'rb') as f:
-            obj = pickle.load(f)
-        return obj
+        try:
+            with open(filename, 'rb') as f:
+                obj = pickle.load(f)
+            return obj
+        except FileNotFoundError:
+            return None

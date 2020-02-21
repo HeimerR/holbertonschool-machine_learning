@@ -7,20 +7,14 @@ Deep = __import__('3-deep_neural_network').DeepNeuralNetwork
 one_hot_encode = __import__('0-one_hot_encode').one_hot_encode
 one_hot_decode = __import__('1-one_hot_decode').one_hot_decode
 
-lib= np.load('../data/MNIST.npz')
+lib = np.load('../data/MNIST.npz')
 X_train_3D = lib['X_train']
-print("X shape")
-print(X_train_3D.shape)
 Y_train = lib['Y_train']
 X_valid_3D = lib['X_valid']
 Y_valid = lib['Y_valid']
 X_train = X_train_3D.reshape((X_train_3D.shape[0], -1)).T
-print("X shape modified")
-print(X_train.shape)
 X_valid = X_valid_3D.reshape((X_valid_3D.shape[0], -1)).T
 Y_train_one_hot = one_hot_encode(Y_train, 10)
-print("Y_train_one_hot shape")
-print(Y_train_one_hot.shape)
 Y_valid_one_hot = one_hot_encode(Y_valid, 10)
 
 deep = Deep.load('3-saved.pkl')
