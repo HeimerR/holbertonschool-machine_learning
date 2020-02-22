@@ -15,7 +15,7 @@ class DeepNeuralNetwork:
             raise ValueError('nx must be a positive integer')
         if type(layers) != list:
             raise TypeError('layers must be a list of positive integers')
-        if not all(n > 0 for n in layers):
+        if len(layers) == 0:
             raise TypeError('layers must be a list of positive integers')
         if activation != 'sig' and activation != 'tanh':
             raise ValueError("activation must be 'sig' or 'tanh'")
@@ -25,15 +25,17 @@ class DeepNeuralNetwork:
         self.__activation = activation
         self.__cache = {}
         self.__weights = {}
-        for ly in range(self.__L):
-            self.__weights["b"+str(ly+1)] = np.zeros((layers[ly], 1))
+        for ly in range(self.L):
+            if type(layers[ly]) != int or layers[ly] <= 0:
+                raise TypeError('layers must be a list of positive integers')
+            self.weights["b"+str(ly+1)] = np.zeros((layers[ly], 1))
             if ly == 0:
                 heetal = np.random.randn(layers[ly], nx) * np.sqrt(2/nx)
-                self.__weights["W"+str(ly+1)] = heetal
+                self.weights["W"+str(ly+1)] = heetal
             else:
                 factor = np.sqrt(2/layers[ly-1])
                 heetal = np.random.randn(layers[ly], layers[ly-1]) * factor
-                self.__weights["W"+str(ly+1)] = heetal
+                self.weights["W" + str(ly+1)] = heetal
 
     @property
     def L(self):
