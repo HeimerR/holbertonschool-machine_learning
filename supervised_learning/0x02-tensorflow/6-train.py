@@ -42,11 +42,11 @@ def train(X_train, Y_train, X_valid, Y_valid, layer_sizes, activations, alpha, i
         #y_p = sess.run(y_pred, feed_dict={x: X_train, y: Y_train})
         cost = sess.run(loss, feed_dict={x: X_train, y: Y_train})
         acc = sess.run(accuracy, feed_dict={x: X_train, y: Y_train})
-        #print("HOla" *100)
+        #print("Hla" *100)
         if i % 100 == 0:
             print("After {} iterations:".format(i))
             print("\tTraining Cost: {}".format(cost))
             print("\tTraining Accuracy: {}".format(acc))
-        #sess.run(train_op, feed_dict={loss: cost})
+        sess.run(train_op,  feed_dict={x: X_train, y: Y_train})
     saver.save(sess, save_path)
     return save_path
