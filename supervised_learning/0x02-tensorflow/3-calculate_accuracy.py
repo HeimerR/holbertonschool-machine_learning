@@ -5,8 +5,9 @@ import tensorflow as tf
 
 def calculate_accuracy(y, y_pred):
     """ calculates the accuracy of a prediction """
-    #prediction = tf.argmax(prob, 1)
-    equality = tf.equal(y_pred, y)
+    pred = tf.argmax(y_pred, 1)
+    val = tf.argmax(y, 1)
+    equality = tf.equal(pred, val)
     accuracy = tf.reduce_mean(tf.cast(equality, tf.float32))
 
     return accuracy
