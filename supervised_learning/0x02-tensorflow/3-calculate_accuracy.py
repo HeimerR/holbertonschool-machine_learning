@@ -5,4 +5,5 @@ import tensorflow as tf
 
 def calculate_accuracy(y, y_pred):
     """ calculates the accuracy of a prediction """
-    return tf.reduce_mean((y_pred - y)**2)
+    ac, _ = tf.metrics.accuracy(predictions=y_pred, labels=y)
+    return ac
