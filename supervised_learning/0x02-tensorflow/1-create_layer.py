@@ -6,6 +6,6 @@ import tensorflow as tf
 def create_layer(prev, n, activation):
     """ creates layers """
     initialize = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
-    tensor_l = (tf.layers.dense(prev, units=n, activation=activation,
-                kernel_initializer=initialize))
+    tensor_l = (tf.layers.Dense(prev, units=n, activation=activation,
+                kernel_initializer=initialize, name='layer'))
     return tensor_l
