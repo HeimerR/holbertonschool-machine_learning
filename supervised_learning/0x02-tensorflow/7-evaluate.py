@@ -7,7 +7,8 @@ def evaluate(X, Y, save_path):
     """ evaluates the output of a neural network """
     sess = tf.Session()
     saver = tf.train.import_meta_graph(save_path + ".meta")
-    saver.restore(sess, tf.train.latest_checkpoint('./'))
+    root = "/".join(save_path.split("/")[:-1]) + "/"
+    saver.restore(sess, tf.train.latest_checkpoint(root))
 
     graph = tf.get_default_graph()
     x = graph.get_tensor_by_name("x:0")
