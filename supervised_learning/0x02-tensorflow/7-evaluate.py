@@ -10,14 +10,6 @@ def evaluate(X, Y, save_path):
         root = "/".join(save_path.split("/")[:-1]) + "/"
         saver.restore(sess, tf.train.latest_checkpoint(root))
 
-        """
-        graph = tf.get_default_graph()
-        x = graph.get_tensor_by_name("x:0")
-        y = graph.get_tensor_by_name("y:0")
-        forward_prop = graph.get_tensor_by_name("layer_2/BiasAdd:0")
-        loss = graph.get_tensor_by_name("softmax_cross_entropy_loss/value:0")
-        accuracy = graph.get_tensor_by_name("Mean:0")
-        """
         graph = tf.get_default_graph()
         x = graph.get_collection("x")[0]
         y = graph.get_collection("y")[0]
