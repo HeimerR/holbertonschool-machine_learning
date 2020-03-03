@@ -8,7 +8,7 @@ def batch_norm(Z, gamma, beta, epsilon):
     neural network using batch normalization
     """
     m = np.mean(Z, axis=0).reshape(1, Z.shape[1])
-    s = np.std(Z, axis=0).reshape(1, Z.shape[1])
-    Z_norm = (Z - m) / ((s+epsilon)**(1/2))
+    s = np.var(Z, axis=0).reshape(1, Z.shape[1])
+    Z_norm = (Z - m) / ((s + epsilon)**(1/2))
     Z_tilde = gamma*Z_norm + beta
     return Z_tilde
