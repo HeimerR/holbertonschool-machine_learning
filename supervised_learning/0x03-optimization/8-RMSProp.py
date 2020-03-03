@@ -7,7 +7,6 @@ def create_RMSProp_op(loss, alpha, beta2, epsilon):
     """ creates the training operation for a NN
     in tensorflow using the RMSProp optimization algorithm
     """
-    c = (tf.train.RMSPropOptimizer(learning_rate=alpha,
-         momentum=beta2, epsilon=epsilon)
-         .minimize(loss))
-    return c
+    return (tf.train.RMSPropOptimizer(learning_rate=alpha,
+            momentum=beta2, epsilon=epsilon)
+            .minimize(loss))
