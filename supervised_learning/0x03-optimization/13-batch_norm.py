@@ -7,8 +7,9 @@ def batch_norm(Z, gamma, beta, epsilon):
     """ normalizes an unactivated output of a
     neural network using batch normalization
     """
-    m = np.mean(Z, axis=0).reshape(1, Z.shape[1])
-    s = np.var(Z, axis=0).reshape(1, Z.shape[1])
-    Z_norm = (Z - m) / ((s + epsilon)**(1/2))
+
+    m = np.mean(Z, axis=0)
+    s = np.var(Z, axis=0)
+    Z_norm = (Z - m) / (s + epsilon)
     Z_tilde = gamma*Z_norm + beta
     return Z_tilde
