@@ -2,64 +2,6 @@
 """ Model everithing together """
 
 
-def create_layer(prev, n, activation):
-    """ creates layers """
-    initialize = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
-    tensor_l = (tf.layers.Dense(units=n, activation=activation,
-                kernel_initializer=initialize, name="layer"))
-    return tensor_l(prev)
-
-
-def create_batch_norm_layer(prev, n, activation):
-    """  creates a batch normalization layer for a neural network
-    in tensorflow
-    """
-    initialize = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
-    x = (tf.layers.Dense(units=n, activation=None,
-         kernel_initializer=initialize))
-    m, s = tf.nn.moments(x(prev), axes=[0], keep_dims=True)
-    f = (tf.nn.batch_normalization(x(prev), mean=m, variance=s,
-         offset=None, scale=None, variance_epsilon=1e-8))
-    return activation(f)
-
-
-def forward_prop(x, layer_sizes=[], activations=[]):
-    """creates the forward propagation graph for the neural network """
-    net = create_batch_norm_layer(x, layer_sizes[0], activations[0])
-    for i in range(1, len(layer_sizes)):
-        net = create_layer(net, layer_sizes[i], activations[i])
-    return net
-
-
-def calculate_accuracy(y, y_pred):
-    """ calculates the accuracy of a prediction """
-    pred = tf.argmax(y_pred, 1)
-    val = tf.argmax(y, 1)
-    equality = tf.equal(pred, val)
-    accuracy = tf.reduce_mean(tf.cast(equality, tf.float32))
-    return accuracy
-
-
-def calculate_loss(y, y_pred):
-    """ calculates the softmax cross-entropy loss of a prediction """
-    return tf.losses.softmax_cross_entropy(y, y_pred)
-
-
-def create_Adam_op(loss, alpha, beta1, beta2, epsilon):
-    """ creates the training operation for a neural network
-    in tensorflow using the Adam optimization algorithm
-    """
-    return tf.train.AdamOptimizer(alpha, beta1, beta2, epsilon).minimize(loss)
-
-
-def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
-    """ creates a learning rate decay operation
-    in tensorflow using inverse time decay
-    """
-    return (tf.train.inverse_time_decay(alpha, global_step,
-            decay_step, decay_rate, staircase=True))
-
-
 def model(Data_train, Data_valid, layers, activations, alpha=0.001,
           beta1=0.9, beta2=0.999, epsilon=1e-8, decay_rate=1,
           batch_size=32, epochs=5, save_path='/tmp/model.ckpt'):
