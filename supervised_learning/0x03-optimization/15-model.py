@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """ Model everithing together """
-import tensorflow as tf
 
 
 def create_layer(prev, n, activation):
