@@ -10,6 +10,6 @@ def batch_norm(Z, gamma, beta, epsilon):
 
     m = np.mean(Z, axis=0)
     s = np.var(Z, axis=0)
-    Z_norm = (Z - m) / (s + epsilon)
+    Z_norm = (Z - m) / ((s + epsilon)**(1/2))
     Z_tilde = gamma*Z_norm + beta
     return Z_tilde
