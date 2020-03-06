@@ -7,8 +7,10 @@ def create_batch_norm_layer(prev, n, activation):
     """  creates a batch normalization layer for a neural network
     in tensorflow
     """
-    x = tf.layers.Dense(units=n, activation=activation)
-    m, s = tf.nn.moments(x(prev), axes=[0])
+    gamma = tf.get_variable("gamma", [n])
+    beta = tf.get_variable("beta", [n])
+    x = tf.layers.Dense(units=n, activation=None)
+    m, s = tf.nn.moments(x(prev), axes=[0], keep_dims=True)
     f = (tf.nn.batch_normalization(x(prev), mean=m, variance=s,
-         offset=None, scale=None, variance_epsilon=1e-8))
-    return f
+         offset=beta, scale=gamma, variance_epsilon=1e-8))
+    return activation(f)
