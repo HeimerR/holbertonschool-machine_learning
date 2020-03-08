@@ -1,29 +1,70 @@
 #!/usr/bin/env python3
-""" Mini-Batch """
+""" Model """
 import tensorflow as tf
 shuffle_data = __import__('2-shuffle_data').shuffle_data
-shuffle_data = __import__('14-batch_norm').create_batch_norm_layer
-shuffle_data = __import__('12-learning_rate_decay').learning_rate_decay
-shuffle_data = __import__('10-Adam').create_Adam_op
+create_batch_norm_layer = __import__('14-batch_norm').create_batch_norm_layer
+learning_rate_decay = __import__('12-learning_rate_decay').learning_rate_decay
+create_Adam_op = __import__('10-Adam').create_Adam_op
 
 
-def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32,
-                     epochs=5, load_path="/tmp/model.ckpt",
-                     save_path="/tmp/model.ckpt"):
-    """ trains a loaded neural network model using mini-batch GD """
+def forward_prop(x, layer_sizes=[], activations=[]):
+    """creates the forward propagation graph for the neural network """
+    net = create_batch_norm_layer(x, layer_sizes[0], activations[0])
+    for i in range(1, len(layer_sizes)):
+        net = create_batch_norm_layer(net, layer_sizes[i], activations[i])
+    return net
+
+
+def calculate_loss(y, y_pred):
+    """ calculates the softmax cross-entropy loss of a prediction """
+    return tf.losses.softmax_cross_entropy(y, y_pred)
+
+
+def calculate_accuracy(y, y_pred):
+    """ calculates the accuracy of a prediction """
+    pred = tf.argmax(y_pred, 1)
+    val = tf.argmax(y, 1)
+    equality = tf.equal(pred, val)
+    accuracy = tf.reduce_mean(tf.cast(equality, tf.float32))
+    return accuracy
+
+
+def model(Data_train, Data_valid, layers, activations, alpha=0.001,
+          beta1=0.9, beta2=0.999, epsilon=1e-8, decay_rate=1,
+          batch_size=32, epochs=5, save_path='/tmp/model.ckpt'):
+    """  builds, trains, and saves a neural network model in tensorflow
+    using Adam optimization, mini-batch gradient descent,
+    learning rate decay, and batch normalization
+    """
+    x = (tf.placeholder(tf.float32,
+         shape=(None, Data_train[0].shape[1]), name='x'))
+    y = (tf.placeholder(tf.float32,
+         shape=(None, Data_train[1].shape[1]), name='y'))
+    tf.add_to_collection('x', x)
+    tf.add_to_collection('y', y)
+
+    y_pred = forward_prop(x, layers, activations)
+    tf.add_to_collection('y_pred', y_pred)
+
+    loss = calculate_loss(y, y_pred)
+    tf.add_to_collection('loss', loss)
+
+    accuracy = calculate_accuracy(y, y_pred)
+    tf.add_to_collection('accuracy', accuracy)
+
+    train_op = create_Adam_op(loss, alpha, beta1, beta2, epsilon)
+    tf.add_to_collection('train_op', train_op)
+
+    global_step = tf.Variable(0, trainable=False)
+
+    saver = tf.train.Saver()
+    init = tf.global_variables_initializer()
+
     with tf.Session() as sess:
-        saver = tf.train.import_meta_graph(load_path + ".meta")
-        saver.restore(sess, load_path)
-
-        x = tf.get_collection("x")[0]
-        y = tf.get_collection("y")[0]
-        loss = tf.get_collection("loss")[0]
-        accuracy = tf.get_collection("accuracy")[0]
-        train_op = tf.get_collection("train_op")[0]
-
-        feed_dict_t = {x: X_train, y: Y_train}
-        feed_dict_v = {x: X_valid, y: Y_valid}
-        float_iterations = X_train.shape[0]/batch_size
+        sess.run(init)
+        feed_dict_t = {x: Data_train[0], y: Data_train[1]}
+        feed_dict_v = {x: Data_valid[0], y: Data_valid[1]}
+        float_iterations = Data_train[0].shape[0]/batch_size
         iterations = int(float_iterations)
         if float_iterations > iterations:
             iterations = int(float_iterations) + 1
@@ -41,7 +82,9 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32,
             print("\tValidation Cost: {}".format(cost_v))
             print("\tValidation Accuracy: {}".format(acc_v))
             if epoch < epochs:
-                X_shuffled, Y_shuffled = shuffle_data(X_train, Y_train)
+                alpha = learning_rate_decay(alpha, decay_rate, global_step, 1)
+                X_shuffled, Y_shuffled = (shuffle_data(Data_train[0],
+                                          Data_train[1]))
                 for step in range(iterations):
                     start = step*batch_size
                     if step == iterations - 1 and extra:
