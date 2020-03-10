@@ -17,6 +17,6 @@ def dropout_forward_prop(X, weights, L, keep_prob):
         else:
             cache["A"+str(ly+1)] = np.tanh(Z)
             cache["D"+str(ly+1)] = drop
-        cache["A"+str(ly+1)] *= drop
-        cache["A"+str(ly+1)] /= keep_prob
+            cache["A"+str(ly+1)] *= drop
+            cache["A"+str(ly+1)] /= keep_prob
     return cache
