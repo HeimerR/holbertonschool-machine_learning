@@ -20,5 +20,5 @@ def load_config(filename):
     Returns: the loaded model
     """
     with open(filename, "r") as f:
-        network = f.read()
-    return network
+        network_string = f.read()
+    return K.models.model_from_json(network_string)
