@@ -27,8 +27,9 @@ def train_model(network, data, labels, batch_size, epochs,
     """
     stop_learn = None
     if validation_data:
-        stop_learn = [K.callbacks.EarlyStopping(patience=patience, monitor='val_loss')]
-    hist = network.fit(data, labels, epochs=epochs, batch_size=batch_size,
+        stop_learn = [K.callbacks.EarlyStopping(patience=patience,
+                                                monitor='val_loss')]
+    hist = network.fit(x=data, y=labels, epochs=epochs, batch_size=batch_size,
                        shuffle=shuffle, verbose=verbose,
                        validation_data=validation_data, callbacks=stop_learn)
     return hist
