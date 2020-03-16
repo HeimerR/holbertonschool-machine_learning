@@ -26,7 +26,7 @@ def train_model(network, data, labels, batch_size, epochs,
         Returns: the History object generated after training the model
     """
     stop_learn = None
-    if isinstance(validation_data, tuple) and early_stopping is True:
+    if early_stopping and validation_data:
         stop_learn = [K.callbacks.EarlyStopping(patience=patience)]
     hist = network.fit(data, labels, epochs=epochs, batch_size=batch_size,
                        shuffle=shuffle, verbose=verbose,
