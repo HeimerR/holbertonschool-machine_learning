@@ -36,7 +36,7 @@ def train_model(network, data, labels, batch_size, epochs,
         return alpha / (1 + decay_rate * epoch)
 
     call_list = []
-    if learning_rate_decay and validation_data:
+    if validation_data:
         decay = K.callbacks.LearningRateScheduler(learning_rate, 1)
         call_list.append(decay)
     if early_stopping and validation_data:
