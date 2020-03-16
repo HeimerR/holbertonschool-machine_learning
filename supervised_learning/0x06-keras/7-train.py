@@ -31,13 +31,13 @@ def train_model(network, data, labels, batch_size, epochs,
         @decay_rate is the decay rate
         Returns: the History object generated after training the model
     """
-    def learning_rate_decay(epoch):
-        """ updates the learning rate using inverse time decay in numpy """
-        return alpha / (1 + decay_rate * int(epoch / 1))
+    def learning_rate(epoch):
+        """ updates the learning rate using inverse time decay """
+        return alpha / (1 + decay_rate * epoch)
 
     call_list = []
-    if early_stopping and validation_data:
-        decay = K.callbacks.LearningRateScheduler(learning_rate_decay, 1)
+    if learning_rate_decay and validation_data:
+        decay = K.callbacks.LearningRateScheduler(learning_rate, 1)
         call_list.append(decay)
     if early_stopping and validation_data:
         stop_learn = K.callbacks.EarlyStopping(patience=patience)
