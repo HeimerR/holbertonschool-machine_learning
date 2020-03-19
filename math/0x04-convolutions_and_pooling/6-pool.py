@@ -39,7 +39,6 @@ def pool(images, kernel_shape, stride, mode='max'):
     out_w = int(((w-kw)/sw) + 1)
     conv = np.zeros((m, out_h, out_w, c))
     img = np.arange(m)
-    ch = np.arange(c)
     for j in range(out_h):
         for i in range(out_w):
             if mode == 'max':
