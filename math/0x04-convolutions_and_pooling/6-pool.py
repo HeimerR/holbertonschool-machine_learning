@@ -1,36 +1,52 @@
 #!/usr/bin/env python3
-"""Convolutional Neural Networks"""
+""" Pooling """
 import numpy as np
 
 
 def pool(images, kernel_shape, stride, mode='max'):
-    """performs a convolurion 3D image, RGB image - color
-    Arg:
-       images: np.array containing RGB img (m, h, w, c)
-       kernel: filter for the convolution (kh, kw)
-       stride: tuple (sh, sw)
-       mood: type of pooling max or avg
-    Return: padded convolved images RGB np.array
+    """ performs a convolution on images with channels:
+
+        @images is a numpy.ndarray with shape (m, h, w)
+            containing multiple grayscale images
+            @m is the number of images
+            @h is the height in pixels of the images
+            @w is the width in pixels of the images
+            @c is the number of channels in the image
+        @kernel is a numpy.ndarray with shape (kh, kw)
+            containing the kernel for the convolution
+        @kh is the height of the kernel
+        @kw is the width of the kernel
+        @padding is either a tuple of (ph, pw), ‘same’, or ‘valid’
+            if ‘same’, performs a same convolution
+            if ‘valid’, performs a valid convolution
+            if a tuple:
+                @ph is the padding for the height of the image
+                @pw is the padding for the width of the image
+        @stride is a tuple of (sh, sw)
+            @sh is the stride for the height of the image
+            @sw is the stride for the width of the image
+        Returns: a numpy.ndarray containing the convolved images
     """
-    m, img_h, img_w, img_c = images.shape
-    k_h = kernel_shape[0]
-    k_w = kernel_shape[1]
-
-    out_h = int(((img_h - k_h) / (stride[0])) + 1)
-    out_w = int(((img_w - k_w) / (stride[1])) + 1)
-    output_conv = np.zeros((m, out_h, out_w, img_c))
-    m_img = np.arange(0, m)
-
-    for i in range(out_h):
-        for j in range(out_w):
+    m = images.shape[0]
+    h = images.shape[1]
+    w = images.shape[2]
+    c = images.shape[3]
+    kh = kernel_shape[0]
+    kw = kernel_shape[1]
+    sh = stride[0]
+    sw = stride[0]
+    out_h = int(((h-kh)/sh) + 1)
+    out_w = int(((w-kw)/sw) + 1)
+    conv = np.zeros((m, out_h, out_w, c))
+    img = np.arange(m)
+    for j in range(out_h):
+        for i in range(out_w):
             if mode == 'max':
-                output_conv[m_img, i, j] = np.max(
-                    images[m_img,
-                           i*(stride[0]):k_h+(i*(stride[0])),
-                           j*(stride[1]):k_w+(j*(stride[1]))], axis=(1, 2))
+                conv[img, j, i] = (np.max(images[img,
+                                   j*sh:(kh+(j*sh)),
+                                   i*sw:(kw+(i*sw))], axis=(1, 2)))
             if mode == 'avg':
-                output_conv[m_img, i, j] = np.mean(
-                    images[m_img,
-                           i*(stride[0]):k_h+(i*(stride[0])),
-                           j*(stride[1]):k_w+(j*(stride[1]))], axis=(1, 2))
-    return output_conv
+                conv[img, j, i] = (np.mean(images[img,
+                                   j*sh:(kh+(j*sh)),
+                                   i*sw:(kw+(i*sw))], axis=(1, 2)))
+    return conv
