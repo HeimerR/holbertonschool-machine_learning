@@ -36,33 +36,25 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
     sh = stride[0]
     sw = stride[1]
     if padding == 'valid':
-        new_h = h
-        new_w = w
-        new_images = images
+        ph = 0
+        pw = 0
     if padding == 'same':
-        ph = int((kh - 1)/2)
-        pw = int((kw - 1)/2)
-        if kh % 2 == 0:
-            ph = int(kh/2)
-        if kw % 2 == 0:
-            pw = int(kw/2)
-    if type(padding) == 'tuple':
+        ph = int(((h-1)*sh+kh-h)/2) + 1
+        pw = int(((w-1)*sw+kw-w)/2) + 1
+    if type(padding) == tuple:
         ph = padding[0]
         pw = padding[1]
-    if padding == 'same' or type(padding) == 'tuple':
-        new_images = np.pad(images, pad_width=((0, 0),
-                            (ph, ph), (pw, pw), (0, 0)),
-                            mode='constant', constant_values=0)
-        new_h = new_images.shape[1]
-        new_w = new_images.shape[2]
-    out_h = int(((new_h-kh)/sh) + 1)
-    out_w = int(((new_w-kw)/sw) + 1)
-    conv = np.zeros((m, out_h, out_w))
+    if padding == 'same' or type(padding) == tuple:
+        images = np.pad(images, pad_width=((0, 0),
+                        (ph, ph), (pw, pw), (0, 0)),
+                        mode='constant', constant_values=0)
+    conv_h = int(((h+2*ph-kh)/sh) + 1)
+    conv_w = int(((w+2*pw-kw)/sw) + 1)
+    conv = np.zeros((m, conv_h, conv_w))
     img = np.arange(m)
-    ch = np.arange(c)
-    for j in range(out_h):
-        for i in range(out_w):
-            conv[img, j, i] = (np.sum(new_images[img,
+    for j in range(conv_h):
+        for i in range(conv_w):
+            conv[img, j, i] = (np.sum(images[img,
                                j*sh:(kh+(j*sh)),
                                i*sw:(kw+(i*sw))] *
                                kernel, axis=(1, 2, 3)))
