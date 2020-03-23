@@ -39,10 +39,6 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     sw = stride[1]
     ph = 0
     pw = 0
-    print("A_prev.shape: {}".format(A_prev.shape))
-    print("b.shape: {}".format(b.shape))
-    print("b: {}".format(b))
-    print("W.shape: {}".format(W.shape))
     if padding == 'same':
         ph = int(((h_prev-1)*sh+kh-h_prev)/2) + 1
         pw = int(((w_prev-1)*sw+kw-w_prev)/2) + 1
@@ -62,6 +58,6 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
                                       W[:, :, :, k],
                                       axis=(1, 2, 3)))
                 conv[img, j, i, k] += b[0, 0, 0, k]
-                conv[img, j, i, k] += activation(conv[img, j, i, k])
+                conv[img, j, i, k] = activation(conv[img, j, i, k])
 
     return conv
