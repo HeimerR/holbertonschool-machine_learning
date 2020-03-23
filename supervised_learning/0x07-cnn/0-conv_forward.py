@@ -53,7 +53,8 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         for i in range(conv_w):
             for k in range(c_new):
                 tmp = A_prev[img, j*sh:(kh+(j*sh)), i*sw:(kw+(i*sw))]
-                conv[img, j, i, k] = (activation(np.sum(tmp *
+                conv[img, j, i, k] = (np.sum(tmp *
                                       W[:, :, :, k],
-                                      axis=(1, 2, 3))+b[0, 0, 0, k]))
+                                      axis=(1, 2, 3)))
+                conv[img, j, i, k] = activation(conv[img, j, i, k])
     return conv
