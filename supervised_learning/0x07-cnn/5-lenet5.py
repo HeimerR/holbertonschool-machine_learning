@@ -25,38 +25,38 @@ def lenet5(X):
         Returns: a K.Model compiled to use Adam optimization
             (with default hyperparameters) and accuracy metrics
     """
-    model = K.Sequential()
     init = K.initializers.he_normal(seed=None)
-    model.add(K.layers.Conv2D(filters=6,
-                              kernel_size=5,
-                              padding='same',
-                              kernel_initializer=init,
-                              activation='relu',
-                              input_shape=(28, 28, 1)))
+    output = K.layers.Conv2D(filters=6,
+                             kernel_size=5,
+                             padding='same',
+                             kernel_initializer=init,
+                             activation='relu')(X)
 
-    model.add(K.layers.MaxPool2D(strides=2))
+    output2 = K.layers.MaxPool2D(strides=2)(output)
 
-    model.add(K.layers.Conv2D(filters=16,
+    output3 = K.layers.Conv2D(filters=16,
                               kernel_size=5,
                               padding='valid',
                               kernel_initializer=init,
-                              activation='relu'))
+                              activation='relu')(output2)
 
-    model.add(K.layers.MaxPool2D(strides=2))
+    output4 = K.layers.MaxPool2D(strides=2)(output3)
 
-    model.add(K.layers.Flatten())
+    output5 = K.layers.Flatten()(output4)
 
-    model.add(K.layers.Dense(units=120,
+    output6 = K.layers.Dense(units=120,
                              kernel_initializer=init,
-                             activation='relu'))
+                             activation='relu')(output5)
 
-    model.add(K.layers.Dense(units=84,
+    output7 = K.layers.Dense(units=84,
                              kernel_initializer=init,
-                             activation='relu'))
+                             activation='relu')(output6)
 
-    model.add(K.layers.Dense(units=10,
+    output8 = K.layers.Dense(units=10,
                              kernel_initializer=init,
-                             activation='softmax'))
+                             activation='softmax')(output7)
+
+    model = K.models.Model(inputs=X, outputs=output8)
 
     model.compile(optimizer=K.optimizers.Adam(),
                   loss='categorical_crossentropy',
