@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """ LeNet-5 (Tensorflow) """
 import tensorflow as tf
 
