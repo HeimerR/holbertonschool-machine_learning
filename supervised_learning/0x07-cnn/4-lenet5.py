@@ -30,48 +30,47 @@ def lenet5(x, y):
             a tensor for the loss of the network
             a tensor for the accuracy of the network
     """
+    init = tf.contrib.layers.variance_scaling_initializer()
     layer_conv1 = tf.layers.Conv2D(filters=6,
                                    kernel_size=5,
                                    padding="same",
+                                   kernel_initializer=init,
                                    activation=tf.nn.relu)(x)
 
-    layer_pool1 = tf.layers.max_pooling2d(inputs=layer_conv1,
-                                          pool_size=[2, 2],
-                                          strides=2)
+    layer_pool1 = tf.layers.MaxPooling2D(pool_size=[2, 2],
+                                         strides=2)(layer_conv1)
 
     layer_conv2 = tf.layers.Conv2D(filters=16,
                                    kernel_size=5,
                                    padding="valid",
+                                   kernel_initializer=init,
                                    activation=tf.nn.relu)(layer_pool1)
 
-    layer_pool2 = tf.layers.max_pooling2d(inputs=layer_conv2,
-                                          pool_size=[2, 2],
-                                          strides=2)
+    layer_pool2 = tf.layers.MaxPooling2D(pool_size=[2, 2],
+                                         strides=2)(layer_conv2)
 
-    layer_flat1 = tf.layers.flatten(layer_pool2)
+    layer_flat1 = tf.layers.Flatten()(layer_pool2)
 
-    init = tf.contrib.layers.variance_scaling_initializer()
-    layer_fully1 = tf.layers.dense(inputs=layer_flat1,
-                                   units=120,
+    layer_fully1 = tf.layers.Dense(units=120,
                                    activation=tf.nn.relu,
-                                   kernel_initializer=init)
+                                   kernel_initializer=init)(layer_flat1)
 
-    init2 = tf.contrib.layers.variance_scaling_initializer()
-    layer_fully2 = tf.layers.dense(inputs=layer_fully1,
-                                   units=84, activation=tf.nn.relu,
-                                   kernel_initializer=init2)
+    layer_fully2 = tf.layers.Dense(units=84,
+                                   activation=tf.nn.relu,
+                                   kernel_initializer=init)(layer_fully1)
 
-    out = tf.layers.dense(inputs=layer_fully2,
-                          units=10,
-                          activation=tf.nn.softmax)
+    out = tf.layers.Dense(units=10,
+                          kernel_initializer=init)(layer_fully2)
 
-    optimizer = tf.train.AdamOptimizer()
+    out_softmax = tf.nn.softmax(out)
 
-    cost = tf.losses.softmax_cross_entropy(out, y)
+    loss = tf.losses.softmax_cross_entropy(y, out)
+
+    optimizer = tf.train.AdamOptimizer().minimize(loss)
 
     pred = tf.argmax(y, 1)
     val = tf.argmax(out, 1)
     equality = tf.equal(pred, val)
     accuracy = tf.reduce_mean(tf.cast(equality, tf.float32))
 
-    return out, optimizer, cost, accuracy
+    return out_softmax, optimizer, loss, accuracy
