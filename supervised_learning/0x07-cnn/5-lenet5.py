@@ -31,7 +31,8 @@ def lenet5(X):
                               kernel_size=5,
                               padding='same',
                               kernel_initializer=init,
-                              activation='relu'))
+                              activation='relu',
+                              input_shape=(X.shape[1:])))
 
     model.add(K.layers.MaxPool2D(strides=2))
 
