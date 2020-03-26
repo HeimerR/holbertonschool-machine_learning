@@ -3,6 +3,28 @@
 import numpy as np
 
 
+def convolve(images, kernel):
+    """ convolve simple same """
+    h = images.shape[0]
+    w = images.shape[1]
+    kh = kernel.shape[0]
+    kw = kernel.shape[1]
+    ph = int((kh - 1)/2)
+    pw = int((kw - 1)/2)
+    if kh % 2 == 0:
+        ph = int(kh/2)
+    if kw % 2 == 0:
+        pw = int(kw/2)
+    new_images = np.pad(images, pad_width=((ph, ph), (pw, pw)),
+                        mode='symmetric')
+    conv = np.zeros((h, w))
+    for j in range(h):
+        for i in range(w):
+            conv[j, i] = (np.sum(new_images[j:kh+j, i:kw+i] *
+                          kernel))
+    return conv * -1
+
+
 def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     """
     performs back propagation over a convolutional layer of a neural network:
@@ -30,41 +52,45 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     @stride is a tuple of (sh, sw) containing the strides for the convolution
         @sh is the stride for the height
         @sw is the stride for the width
-    Returns: the partial derivatives with respect to the previous layer (dA_prev),
-        the kernels (dW), and the biases (db), respectively
+    Returns: the partial derivatives with respect to the
+        previous layer (dA_prev), the kernels (dW),
+        and the biases (db), respectively
     """
-    m = dZ[0]
-    h_new = dZ[1]
-    w_new = dZ[2]
-    c_new = dz[3]
-    h_prev = A_prev[0]
-    w_prev = A_prev[1]
-    c_prev = A_prev[2]
-    kh = W[0]
-    kw = W[1]
-    sh = stride[0]
-    sw = stride[1]
-    tmp_W = W.copy()
-    m = Y.shape[1]
-    for ly in reversed(range(self.__L)):
-	if ly == self.__L - 1:
-	    dz = self.__cache["A"+str(ly+1)] - Y
-	    dw = np.matmul(self.__cache["A"+str(ly)], dz.T) / m
-	else:
-	    d1 = np.matmul(tmp_W["W"+str(ly+2)].T, dzp)
-	    if self.__activation == 'sig':
-		d2 = (self.__cache["A"+str(ly+1)] *
-		      (1-self.__cache["A"+str(ly+1)]))
-	    else:
-		d2 = 1-self.__cache["A"+str(ly+1)]**2
-	    dz = d1 * d2
-	    dw = np.matmul(dz, self.__cache["A"+str(ly)].T) / m
-	db = np.sum(dz, axis=1, keepdims=True) / m
-	if ly == self.__L - 1:
-	    self.__weights["W"+str(ly+1)] = (tmp_W["W"+str(ly+1)] -
-					     (alpha * dw).T)
-	else:
-	    self.__weights["W"+str(ly+1)] = (tmp_W["W"+str(ly+1)] -
-					     (alpha * dw))
-	self.__weights["b"+str(ly+1)] = tmp_W["b"+str(ly+1)] - alpha * db
-	dzp = dz
+    m = A_prev.shape[0]
+
+    db = np.sum(dZ, axis=(0, 1, 2), keepdims=True)
+
+    if padding == "same":
+        pad = (W.shape[0]-1)//2
+    else:
+        pad = 0
+    x_padded = np.pad(A_prev,
+                      ((0, 0), (pad, pad), (pad, pad), (0, 0)),
+                      'constant', constant_values=0)
+
+    x_padded_bcast = np.expand_dims(x_padded, axis=-1)
+    dZ_bcast = np.expand_dims(dZ, axis=-2)
+
+    dW = np.zeros_like(W)
+    f = W.shape[0]
+    w_x = x_padded.shape[1]
+    for a in range(f):
+        for b in range(f):
+            dW[a, b, :, :] = (np.sum(dZ_bcast *
+                              (x_padded_bcast[:, a:w_x-(f-1-a),
+                               b:w_x-(f-1-b), :, :]),
+                              axis=(0, 1, 2)))
+
+    dx = np.zeros_like(x_padded, dtype=float)
+    Z_pad = f-1
+    dZ_padded = (np.pad(dZ, ((0, 0), (Z_pad, Z_pad), (Z_pad, Z_pad),
+                 (0, 0)), 'constant', constant_values=0))
+
+    for m_i in range(A_prev.shape[0]):
+        for k in range(W.shape[3]):
+            for d in range(A_prev.shape[3]):
+                temp = (convolve(dZ_padded[m_i, :, :, k], W[:, :, d, k]))
+                dx[m_i, :, :, d] += temp[f//2:-(f//2), f//2:-(f//2)]
+    dx = dx[:, pad:dx.shape[1]-pad, pad:dx.shape[2]-pad, :]
+
+    return dx, dW, db
