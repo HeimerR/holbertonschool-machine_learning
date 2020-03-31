@@ -18,6 +18,7 @@ def densenet121(growth_rate=32, compression=1.0):
     """
     init = K.initializers.he_normal(seed=None)
     X = K.Input(shape=(224, 224, 3))
+    layers = [12, 24, 16]
 
     norm_1 = K.layers.BatchNormalization()(X)
     active_1 = K.layers.Activation('relu')(norm_1)
@@ -34,21 +35,13 @@ def densenet121(growth_rate=32, compression=1.0):
 
     d_1, nb_filters = dense_block(id_1, growth_rate*2, growth_rate, 6)
 
-    t_1, nb_filters = transition_layer(d_1, nb_filters, compression)
-
-    d_2, nb_filters = dense_block(t_1, nb_filters, growth_rate, 12)
-
-    t_2, nb_filters = transition_layer(d_2, nb_filters, compression)
-
-    d_3, nb_filters = dense_block(t_2, nb_filters, growth_rate, 24)
-
-    t_3, nb_filters = transition_layer(d_3, nb_filters, compression)
-
-    d_4, nb_filters = dense_block(t_3, nb_filters, growth_rate, 16)
+    for layer in layers:
+        t_1, nb_filters = transition_layer(d_1, nb_filters, compression)
+        d_1, nb_filters = dense_block(t_1, nb_filters, growth_rate, layer)
 
     avg_pool = K.layers.AveragePooling2D(pool_size=7,
                                          strides=None,
-                                         padding='same')(d_4)
+                                         padding='same')(d_1)
 
     out = K.layers.Dense(1000,
                          activation='softmax',
