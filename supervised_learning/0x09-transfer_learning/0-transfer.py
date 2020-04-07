@@ -18,11 +18,11 @@ if __name__ == '__main__':
     x_test = K.applications.densenet.preprocess_input(x_test)
     y_test = K.utils.to_categorical(y_test, 10)
 
-    model = K.applications.densenet.DenseNet121(include_top=False, input_shape=(32, 32, 3), pooling='avg', input_tensor=input_tensor)
+    model = K.applications.densenet.DenseNet121(include_top=False, pooling='avg', input_tensor=input_tensor, weights='imagenet')
     for layer in model.layers:
 	    layer.trainable = False
     output = model.layers[-1].output
-    output = K.layers.Flatten()(output)
+    #output = K.layers.Flatten()(output)
     output = K.layers.Dense(512, activation='relu')(output)
     output = K.layers.Dense(10, activation='softmax')(output)
     model = K.models.Model(inputs=model.inputs, outputs=output)
@@ -30,9 +30,10 @@ if __name__ == '__main__':
     model.compile(optimizer='adam',
                     loss='categorical_crossentropy',
                     metrics=['acc'])
-    history = model.fit(x=x_train, y=y_train,
-                    batch_size=512,
-                    epochs=1,
+    history = model.fit(x_train, y_train,
+                    validation_data=(x_test, y_test),
+                    batch_size=64,
+                    epochs=5,
                     verbose=1)
     """
     history = model.fit_generator(train_generator, steps_per_epoch=100, epochs=100,
