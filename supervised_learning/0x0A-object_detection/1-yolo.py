@@ -59,10 +59,10 @@ class Yolo:
             box[..., 2] += box[..., 0]
             box[..., 3] += box[..., 1]
 
-            box[..., 0] = (box[..., 0] * image_size[1])
-            box[..., 2] = (box[..., 2] * image_size[1])
-            box[..., 1] = (box[..., 1] * image_size[0])
-            box[..., 3] = (box[..., 3] * image_size[0])
+            box[..., 0] *= image_size[1]
+            box[..., 2] *= image_size[1]
+            box[..., 1] *= image_size[0]
+            box[..., 3] *= image_size[0]
 
         box_conf = [self.sigmoid(out[..., 4, np.newaxis]) for out in outputs]
         box_class_probs = [self.sigmoid(out[..., 5:]) for out in outputs]
