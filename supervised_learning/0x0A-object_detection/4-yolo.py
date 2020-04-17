@@ -2,6 +2,7 @@
 """ Process Outputs """
 import tensorflow.keras as K
 import numpy as np
+import glob
 
 
 class Yolo:
@@ -191,6 +192,7 @@ class Yolo:
 
         return box_predictions, predicted_box_classes, predicted_box_scores
 
+    @staticmethod
     def load_images(folder_path):
         """ folder_path: a string representing the path to the folder holding
                         all the images to load
@@ -198,7 +200,9 @@ class Yolo:
                 images: a list of images as numpy.ndarrays
                 image_paths: a list of paths to the individual images in images
         """
-        files = glob(folderpath_path)
-        data = [vc2.imread(img) for img in files]
+        image_paths = glob.glob(folder_path + "/*")
+        print(image_paths)
+        images = [vc2.imread(img) for img in image_paths]
+        print(images)
 
-        return data
+        return images, image_paths
