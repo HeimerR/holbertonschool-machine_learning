@@ -106,74 +106,78 @@ class Yolo:
 
         return (filtered_boxes, box_classes, box_scores)
 
-    def overlap(self, interval_a, interval_b):
-        x1, x2 = interval_a
-        x3, x4 = interval_b
+    def gaps_inter(self, range_1, range_2):
+        """ calculates axis intersections"""
+        x1, x2 = range_1
+        x3, x4 = range_2
 
         if x3 < x1:
             if x4 < x1:
                 return 0
             else:
-                return min(x2,x4) - x1
+                return min(x2, x4) - x1
         else:
             if x2 < x3:
                 return 0
             else:
-                return min(x2,x4) - x3
+                return min(x2, x4) - x3
 
     def iou(self, box1, box2):
-        #print(box1)
-        #print(box2)
-        #print("---"*10)
-        intersect_w = self.overlap([box1[0], box1[2]], [box2[0], box2[2]])
-        intersect_h = self.overlap([box1[1], box1[3]], [box2[1], box2[3]])
+        """ calculates intersection over union """
+        inter_x = self.gaps_inter([box1[0], box1[2]], [box2[0], box2[2]])
+        inter_y = self.gaps_inter([box1[1], box1[3]], [box2[1], box2[3]])
 
-        intersect = intersect_w * intersect_h
+        inter = inter_x * inter_y
 
-        w1, h1 = box1[2]-box1[0], box1[3]-box1[1]
-        w2, h2 = box2[2]-box2[0], box2[3]-box2[1]
+        w1 = box1[2]-box1[0]
+        w2 = box2[2]-box2[0]
+        h1 = box1[3]-box1[1]
+        h2 = box2[3]-box2[1]
 
-        union = w1*h1 + w2*h2 - intersect
+        union = w1*h1 + w2*h2 - inter
 
-        return float(intersect) / union
+        return inter / union
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
         """ Non - max
-        Returns a tuple of (box_predictions, predicted_box_classes, predicted_box_scores):
+        Returns a tuple of (box_predictions, predicted_box_classes,
+                predicted_box_scores):
 
-            box_predictions: a numpy.ndarray of shape (?, 4) containing all of the predicted
-            bounding boxes ordered by class and box score
+                box_predictions: a numpy.ndarray of shape (?, 4) containing
+                all of the predicted bounding boxes ordered by class and
+                box score
 
-            predicted_box_classes: a numpy.ndarray of shape (?,) containing the class number
-            for box_predictions ordered by class and box score, respectively
+                predicted_box_classes: a numpy.ndarray of shape (?,)
+                containing the class number for box_predictions ordered by
+                class and box score, respectively
 
-            predicted_box_scores: a numpy.ndarray of shape (?) containing the box scores for
-            box_predictions ordered by class and box score, respectively
+                predicted_box_scores: a numpy.ndarray of shape (?)
+                containing the box scores for box_predictions ordered by
+                class and box score, respectively
         """
-        ind = np.lexsort((box_scores,box_classes))
+        ind = np.lexsort((-box_scores, box_classes))
 
         box_predictions = np.array([filtered_boxes[i] for i in ind])
         predicted_box_classes = np.array([box_classes[i] for i in ind])
         predicted_box_scores = np.array([box_scores[i] for i in ind])
 
-        i = 0
-        c = 0
-        idx_to_delete = []
-        classes, counts = np.unique(predicted_box_classes, return_counts=True)
+        _, counts = np.unique(predicted_box_classes, return_counts=True)
 
         i = 0
         ct_prev = 0
-        for cl, ct in zip(classes, counts):
+        for ct in counts:
             j = 1
             while i < ct + ct_prev:
                 while j < ct + ct_prev - i:
                     tmp = self.iou(box_predictions[i], box_predictions[i+j])
-                    #print(tmp if tmp  > self.nms_t else "")
-                    if self.iou(box_predictions[i], box_predictions[i+j]) > self.nms_t:
-                        print(tmp)
-                        box_predictions = np.delete(box_predictions, i+j, axis=0)
-                        predicted_box_scores = np.delete(predicted_box_scores, i+j, axis=0)
-                        predicted_box_classes = np.delete(predicted_box_classes, i+j, axis=0)
+                    if tmp > self.nms_t:
+                        box_predictions = np.delete(box_predictions, i+j,
+                                                    axis=0)
+                        predicted_box_scores = np.delete(predicted_box_scores,
+                                                         i+j, axis=0)
+                        predicted_box_classes = (np.delete
+                                                 (predicted_box_classes,
+                                                  i+j, axis=0))
                         ct -= 1
                     else:
                         j += 1
