@@ -3,6 +3,7 @@
 import tensorflow.keras as K
 import numpy as np
 import glob
+import cv2
 
 
 class Yolo:
@@ -204,7 +205,7 @@ class Yolo:
         """
         image_paths = glob.glob(folder_path + "/*")
         print(image_paths)
-        images = [vc2.imread(img) for img in image_paths]
+        images = [cv2.imread(img) for img in image_paths]
         print(images)
 
         return images, image_paths
