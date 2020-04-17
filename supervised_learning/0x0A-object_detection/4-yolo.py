@@ -108,6 +108,7 @@ class Yolo:
         return (filtered_boxes, box_classes, box_scores)
 
     def overlap(self, interval_a, interval_b):
+        """ claculates axis diferences """
         x1, x2 = interval_a
         x3, x4 = interval_b
 
@@ -123,6 +124,7 @@ class Yolo:
                 return min(x2, x4) - x3
 
     def iou(self, box1, box2):
+        """ calculates intersection over union """
         # print(box1)
         # print(box2)
         # print("---"*10)
