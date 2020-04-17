@@ -204,8 +204,6 @@ class Yolo:
                 image_paths: a list of paths to the individual images in images
         """
         image_paths = glob.glob(folder_path + "/*")
-        print(image_paths)
         images = [cv2.imread(img) for img in image_paths]
-        print(images)
 
         return images, image_paths
