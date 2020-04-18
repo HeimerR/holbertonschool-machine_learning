@@ -235,9 +235,9 @@ class Yolo:
                           interpolation=cv2.INTER_CUBIC) for img in images]
         images_rescaled = [img/255 for img in images_resized]
 
-        pimages = numpy.stack(images_rescaled, axis=0)
+        pimages = np.stack(images_rescaled, axis=0)
 
-        image_shapes_list = [img.shape[:2], for img in images]
-        image_shapes = numpy.stack(images, axis=0)
+        image_shapes_list = [img.shape[:2] for img in images]
+        image_shapes = np.stack(image_shapes_list, axis=0)
 
         return (pimages, image_shapes)
