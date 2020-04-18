@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 if __name__ == '__main__':
-    #import cv2
+    import cv2
     import numpy as np
     Yolo = __import__('5-yolo').Yolo
 
@@ -16,6 +16,6 @@ if __name__ == '__main__':
     print(type(image_shapes), image_shapes.shape)
     i = np.random.randint(0, len(images))
     print(images[i].shape, ':', image_shapes[i])
-    #cv2.imshow(image_paths[i], pimages[i])
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    cv2.imshow(image_paths[i], pimages[i])
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
