@@ -109,10 +109,10 @@ class Yolo:
 
         return (filtered_boxes, box_classes, box_scores)
 
-    def overlap(self, interval_a, interval_b):
-        """ claculates axis diferences """
-        x1, x2 = interval_a
-        x3, x4 = interval_b
+    def gaps_inter(self, range_1, range_2):
+        """ calculates axis intersections"""
+        x1, x2 = range_1
+        x3, x4 = range_2
 
         if x3 < x1:
             if x4 < x1:
@@ -127,20 +127,19 @@ class Yolo:
 
     def iou(self, box1, box2):
         """ calculates intersection over union """
-        # print(box1)
-        # print(box2)
-        # print("---"*10)
-        intersect_w = self.overlap([box1[0], box1[2]], [box2[0], box2[2]])
-        intersect_h = self.overlap([box1[1], box1[3]], [box2[1], box2[3]])
+        inter_x = self.gaps_inter([box1[0], box1[2]], [box2[0], box2[2]])
+        inter_y = self.gaps_inter([box1[1], box1[3]], [box2[1], box2[3]])
 
-        intersect = intersect_w * intersect_h
+        inter = inter_x * inter_y
 
-        w1, h1 = box1[2]-box1[0], box1[3]-box1[1]
-        w2, h2 = box2[2]-box2[0], box2[3]-box2[1]
+        w1 = box1[2]-box1[0]
+        w2 = box2[2]-box2[0]
+        h1 = box1[3]-box1[1]
+        h2 = box2[3]-box2[1]
 
-        union = w1*h1 + w2*h2 - intersect
+        union = w1*h1 + w2*h2 - inter
 
-        return float(intersect) / union
+        return inter / union
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
         """ Non - max
@@ -159,27 +158,22 @@ class Yolo:
                 containing the box scores for box_predictions ordered by
                 class and box score, respectively
         """
-        ind = np.lexsort((box_scores, box_classes))
+        ind = np.lexsort((-box_scores, box_classes))
 
         box_predictions = np.array([filtered_boxes[i] for i in ind])
         predicted_box_classes = np.array([box_classes[i] for i in ind])
         predicted_box_scores = np.array([box_scores[i] for i in ind])
 
-        i = 0
-        c = 0
-        idx_to_delete = []
         classes, counts = np.unique(predicted_box_classes, return_counts=True)
 
         i = 0
         ct_prev = 0
-        for cl, ct in zip(classes, counts):
+        for ct in counts:
             j = 1
             while i < ct + ct_prev:
                 while j < ct + ct_prev - i:
                     tmp = self.iou(box_predictions[i], box_predictions[i+j])
-                    # print(tmp if tmp  > self.nms_t else "")
                     if tmp > self.nms_t:
-                        # print(tmp)
                         box_predictions = np.delete(box_predictions, i+j,
                                                     axis=0)
                         predicted_box_scores = np.delete(predicted_box_scores,
@@ -320,10 +314,10 @@ class Yolo:
         pimages, image_shapes = self.preprocess_images(images)
 
         predictions = []
-        for i, img in enumerate(images):
+        for i, img in enumerate(pimages):
             outs = self.model.predict(img)
             bxs, bx_cnfdncs, bx_clss_prbs = (self.process_outputs(outs,
-                                             img.shape[0], img.shape[1]))
+                                             image_shapes[i])
             fltrd_bxs, bx_clsss, bx_scrs = (self.filter_boxes(bxs,
                                             bx_cnfdncs, bx_clss_prbs))
             bx_prdctns, prdctd_bx_clsss, prdctd_bx_scrs = (self.
