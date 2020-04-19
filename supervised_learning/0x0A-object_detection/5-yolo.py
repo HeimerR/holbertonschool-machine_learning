@@ -230,8 +230,7 @@ class Yolo:
 
         model_height = self.model.input.shape[1].value
         model_width = self.model.input.shape[2].value
-
-        images_rescaled = [img/255 for img in images]
+        images_rescaled = [img/img.max() for img in images]
         images_resized = [cv2.resize(img, (model_width, model_height),
                           interpolation=cv2.INTER_CUBIC)
                           for img in images_rescaled]
