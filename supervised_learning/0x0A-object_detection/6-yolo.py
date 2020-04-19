@@ -4,6 +4,7 @@ import tensorflow.keras as K
 import numpy as np
 import glob
 import cv2
+import os
 
 
 class Yolo:
@@ -268,30 +269,33 @@ class Yolo:
             If any key besides s is pressed, the image window is
                 closed without saving
         """
-        img = image[0]
-        scores = np.around(box_scores, decimals=2)
+        img = image
         for i, box in enumerate(boxes):
-            thickness = 2
             color_ln = (255, 0, 0)
             color_tx = (0, 0, 255)
-            start_point = (box[0], box[3])
-            end_point = (box[2], box[1])
-            start_text = (box[0], box[3]+5)
+            start_point = (int(box[0]), int(box[3]))
+            end_point = (int(box[2]), int(box[1]))
+            start_text = (int(box[0]), int(box[1])-5)
             img = cv2.rectangle(img,
                                 start_point,
-                                end_point, color_ln,
-                                thickness)
+                                end_point,
+                                color_ln,
+                                thickness=2)
             img = cv2.putText(img,
-                              self.class_names[box_classes[i]] + scores[i],
+                              self.class_names[box_classes[i]] +
+                              " " + "{:.2f}".format(box_scores[i]),
                               start_text,
-                              FONT_HERSHEY_SIMPLEX,
+                              cv2.FONT_HERSHEY_SIMPLEX,
                               0.5,
                               color_tx,
                               thickness=1,
-                              lineType=LINE_AA,
-                              bottomLeftOrigin=True)
+                              lineType=cv2.LINE_AA,
+                              bottomLeftOrigin=False)
         cv2.imshow(file_name, image)
         key = cv2.waitKey(0)
         if key == ord('s'):
-            cv2.imwrite("./detections" + file_name, img)
+            if not os.path.exists('detections'):
+                os.makedirs('detections')
+            os.chdir('detections')
+            cv2.imwrite(file_name, img)
         cv2.destroyAllWindows()
