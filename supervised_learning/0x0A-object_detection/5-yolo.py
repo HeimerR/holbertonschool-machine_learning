@@ -234,7 +234,7 @@ class Yolo:
         images_resized = [cv2.resize(img, (model_width, model_height),
                           interpolation=cv2.INTER_CUBIC) for img in images]
         images_rescaled = [np.divide(img, 255,
-                           dtype=np.float32) for img in images_resized]
+                           dtype=np.float64) for img in images_resized]
 
         pimages = np.stack(images_rescaled, axis=0)
 
