@@ -231,12 +231,12 @@ class Yolo:
         model_height = self.model.input.shape[1].value
         model_width = self.model.input.shape[2].value
 
+        images_rescaled = [img/255 for img in images]
         images_resized = [cv2.resize(img, (model_width, model_height),
-                          interpolation=cv2.INTER_CUBIC) for img in images]
-        images_rescaled = [np.divide(img, 255,
-                           dtype=np.float64) for img in images_resized]
+                          interpolation=cv2.INTER_CUBIC)
+                          for img in images_rescaled]
 
-        pimages = np.stack(images_rescaled, axis=0)
+        pimages = np.stack(images_resized, axis=0)
 
         image_shapes_list = [img.shape[:2] for img in images]
         image_shapes = np.stack(image_shapes_list, axis=0)
