@@ -139,7 +139,7 @@ class Yolo:
 
         union = w1*h1 + w2*h2 - inter
 
-        return inter / union
+        return float(inter / union)
 
     def non_max_suppression(self, filtered_boxes, box_classes, box_scores):
         """ Non - max
@@ -223,8 +223,8 @@ class Yolo:
                     2 => (image_height, image_width)
         """
 
-        model_height = self.model.input.shape[1].value
-        model_width = self.model.input.shape[2].value
+        model_height = self.model.input.shape[2].value
+        model_width = self.model.input.shape[1].value
 
         images_resized = [cv2.resize(img, (model_width, model_height),
                           interpolation=cv2.INTER_CUBIC) for img in images]
@@ -292,6 +292,7 @@ class Yolo:
                 os.makedirs('detections')
             os.chdir('detections')
             cv2.imwrite(file_name, img)
+            os.chdir('../')
         cv2.destroyAllWindows()
 
     def predict(self, folder_path):
@@ -312,12 +313,12 @@ class Yolo:
         """
         images, image_paths = Yolo.load_images(folder_path)
         pimages, image_shapes = self.preprocess_images(images)
-
+        outputs = self.model.predict(pimages)
         predictions = []
-        for i, img in enumerate(pimages):
-            outs = self.model.predict(img)
+        for i in range(pimages.shape[0]):
+            outs = [out[i] for out in outputs]
             bxs, bx_cnfdncs, bx_clss_prbs = (self.process_outputs(outs,
-                                             image_shapes[i])
+                                             image_shapes[i]))
             fltrd_bxs, bx_clsss, bx_scrs = (self.filter_boxes(bxs,
                                             bx_cnfdncs, bx_clss_prbs))
             bx_prdctns, prdctd_bx_clsss, prdctd_bx_scrs = (self.
@@ -325,7 +326,8 @@ class Yolo:
                                                            (fltrd_bxs,
                                                             bx_clsss, bx_scrs))
             fl_nm = image_paths[i].split('/')[-1]
-            predictions.append((bx_prdctns, prdctns_bx_clsss, prdctd_bx_scrs))
-            self.show_boxes(img, bx_prdctns, prdctd_box_clsss, prdctd_bx_scrs, fl_nm)
+            predictions.append((bx_prdctns, prdctd_bx_clsss, prdctd_bx_scrs))
+            self.show_boxes(images[i], bx_prdctns, prdctd_bx_clsss,
+                            prdctd_bx_scrs, fl_nm)
 
         return predictions, image_paths
