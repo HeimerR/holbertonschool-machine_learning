@@ -3,6 +3,7 @@
 import glob
 import numpy as np
 import csv
+import cv2
 
 
 def load_images(images_path, as_array=True):
@@ -27,7 +28,7 @@ def load_images(images_path, as_array=True):
             in images
     """
     image_paths = glob.glob(images_path + "/*")
-    images_names = [path.split('/')[-1], path in images_paths]
+    images_names = [path.split('/')[-1] for path in image_paths]
     idx = np.argsort(images_names)
     images = [cv2.imread(img) for img in image_paths]
     images = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in images]
