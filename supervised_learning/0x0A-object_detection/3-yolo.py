@@ -184,7 +184,4 @@ class Yolo:
                 i += 1
                 j = 1
             ct_prev += ct
-        print(box_predictions.shape)
-        print(predicted_box_classes.shape)
-        print(predicted_box_scores.shape)
         return box_predictions, predicted_box_classes, predicted_box_scores
