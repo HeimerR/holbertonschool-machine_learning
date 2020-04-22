@@ -31,12 +31,13 @@ def load_images(images_path, as_array=True):
     idx = np.argsort(images_names)
     images = [cv2.imread(img) for img in image_paths]
     images = [cv2.cvtColor(img, cv2.COLOR_BGR2RGB) for img in images]
-    images = images[idx] # sorting
-    filenames = images_names[idx] # sorting
+    images = images[idx]  # sorting
+    filenames = images_names[idx]  # sorting
     if as_array:
         images = np.concatenate(images)
 
     return images, filenames
+
 
 def load_csv(csv_path, params={}):
     """ that loads the contents of a csv file as a list of lists:
