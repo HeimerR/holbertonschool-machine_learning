@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-""" class face aling """
+"""Face Align """
 import dlib
+import cv2
 
 
 class FaceAlign:
@@ -12,7 +13,7 @@ class FaceAlign:
             shape_predictor - contains the dlib.shape_predictor
         """
         self.detector = dlib.get_frontal_face_detector()
-        self.shape_predictor = dlib.shape_predictor(args[shape_predictor_path])
+        self.shape_predictor = dlib.shape_predictor(shape_predictor_path)
 
     def detect(self, image):
         """ detects a face in an image:
@@ -29,15 +30,18 @@ class FaceAlign:
         try:
             faces = self.detector(image, 1)
             area = 0
-            for i, face in enumerate(faces):
+
+            for face in faces:
                 if face.area() > area:
                     area = face.area()
-                    rect = faces[i]
+                    rect = face
+
             if area == 0:
                 rect = (dlib.rectangle(left=0, top=0, right=image.shape[1],
                         bottom=image.shape[0]))
+
             return rect
-        finally:
+        except RuntimeError:
             return None
 
     def find_landmarks(self, image, detection):
@@ -57,7 +61,7 @@ class FaceAlign:
             for i in range(0, 68):
                 coords[i] = [shape.part(i).x, shape.part(i).y]
             return coords
-        finally:
+        except RuntimeError:
             return None
 
     def align(self, image, landmark_indices, anchor_points, size=96):
@@ -74,3 +78,13 @@ class FaceAlign:
             Returns: a numpy.ndarray of shape (size, size, 3) containing
                 the aligned image, or None if no face is detected
         """
+        rect = self.detect(image)
+        coords = self.find_landmarks(image, rect)
+        pts = coords[landmark_indices]
+        pts = pts.astype('float32')
+        pts[:, 0] /= image.shape[1]
+        pts[:, 1] /= image.shape[0]
+        warp_mat = cv2.getAffineTransform(pts, anchor_points)
+        warp_dst = cv2.warpAffine(image, warp_mat, (size, size))
+
+        return warp_dst
