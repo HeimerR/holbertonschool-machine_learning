@@ -4,6 +4,7 @@ import glob
 import numpy as np
 import csv
 import cv2
+import os
 
 
 def load_images(images_path, as_array=True):
@@ -69,13 +70,18 @@ def save_images(path, images, filenames):
 
         Returns: True on success and False on failure
     """
-    try:
-        os.chdir(path)
-        for i, name in enumerate(filenames):
-            cv2.imwrite(name, images[i])
-        return True
+    #try:
+    print("hola1")
+    os.chdir(path)
+    print("hola2")
+    for i, name in enumerate(filenames):
+        print("hola3")
+        cv2.imwrite(name, images[i])
+    return True
+    """
     except:
         return False
+    """
 
 def generate_triplets(images, filenames, triplet_names):
     """ generates triplets:

@@ -2,6 +2,7 @@
 """Face Align """
 import dlib
 import cv2
+import numpy as np
 
 
 class FaceAlign:
@@ -83,7 +84,7 @@ class FaceAlign:
         pts = coords[landmark_indices]
         pts = pts.astype('float32')
         new_anchors = anchor_points * size
-        warp_mat = cv2.getAffineTransform(pts, new_anchor)
+        warp_mat = cv2.getAffineTransform(pts, new_anchors)
         warp_dst = cv2.warpAffine(image, warp_mat, (size, size))
 
         return warp_dst

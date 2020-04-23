@@ -6,12 +6,18 @@ import numpy as np
 import os
 from utils import load_images, save_images
 
+print("main1")
 fa = FaceAlign('models/landmarks.dat')
+print("main2")
 images, filenames = load_images('HBTN', as_array=False)
+print("main3")
 anchors = np.array([[0.194157, 0.16926692], [0.7888591, 0.15817115], [0.4949509, 0.5144414]], dtype=np.float32)
+print("main4")
 aligned = []
 for image in images:
+    print("main5")
     aligned.append(fa.align(image, np.array([36, 45, 33]), anchors, 96))
+print("main6")
 aligned = np.array(aligned)
 print(aligned.shape)
 if not os.path.isdir('HBTNaligned'):
