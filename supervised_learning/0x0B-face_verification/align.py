@@ -82,9 +82,8 @@ class FaceAlign:
         coords = self.find_landmarks(image, rect)
         pts = coords[landmark_indices]
         pts = pts.astype('float32')
-        pts[:, 0] /= image.shape[1]
-        pts[:, 1] /= image.shape[0]
-        warp_mat = cv2.getAffineTransform(pts, anchor_points)
+        new_anchors = anchor_points * size
+        warp_mat = cv2.getAffineTransform(pts, new_anchor)
         warp_dst = cv2.warpAffine(image, warp_mat, (size, size))
 
         return warp_dst
