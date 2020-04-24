@@ -102,16 +102,6 @@ def generate_triplets(images, filenames, triplet_names):
     """
 
     filenames_clean = [name.split('.')[0] for name in filenames]
-    """
-    a, p, n = triplet_names[0]
-    idx_a = filenames_clean.index(a)
-    idx_p = filenames_clean.index(p)
-    idx_n = filenames_clean.index(n)
-
-    np_a = images[idx_a][np.newaxis, ...]
-    np_p = images[idx_p][np.newaxis, ...]
-    np_n = images[idx_n][np.newaxis, ...]
-    """
     for i in range(len(triplet_names)):
         a, p, n = triplet_names[i]
         idx_a = filenames_clean.index(a)
