@@ -70,18 +70,15 @@ def save_images(path, images, filenames):
 
         Returns: True on success and False on failure
     """
-    #try:
-    print("hola1")
-    os.chdir(path)
-    print("hola2")
-    for i, name in enumerate(filenames):
-        print("hola3")
-        cv2.imwrite(name, images[i])
-    return True
-    """
-    except:
+    try:
+    	os.chdir(path)
+    	for name, img in zip(filenames, images):
+        	cv2.imwrite(name, cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+    	os.chdir('../')
+    	return True
+
+    except FileNotFoundError:
         return False
-    """
 
 def generate_triplets(images, filenames, triplet_names):
     """ generates triplets:
@@ -103,12 +100,34 @@ def generate_triplets(images, filenames, triplet_names):
         - N is a numpy.ndarray of shape (m, h, w, 3) containing the
             negative images for all m triplet
     """
-    a_names = [triplet[0] for triplet in triplet_names]
-    p_names = [triplet[1] for triplet in triplet_names]
-    n_names = [triplet[2] for triplet in triplet_names]
 
-    ind_A = list(filter(lambda i: filenames[i] in a_names, range(len(filenames))))
-    ind_P = list(filter(lambda i: filenames[i] in p_names, range(len(filenames))))
-    ind_N = list(filter(lambda i: filenames[i] in n_names, range(len(filenames))))
+    filenames_clean = [name.split('.')[0] for name in filenames]
+    """
+    a, p, n = triplet_names[0]
+    idx_a = filenames_clean.index(a)
+    idx_p = filenames_clean.index(p)
+    idx_n = filenames_clean.index(n)
 
-    return [images[ind_A], images[ind_P], images[ind_N]]
+    np_a = images[idx_a][np.newaxis, ...]
+    np_p = images[idx_p][np.newaxis, ...]
+    np_n = images[idx_n][np.newaxis, ...]
+    """
+    for i in range(len(triplet_names)):
+        a, p, n = triplet_names[i]
+        idx_a = filenames_clean.index(a)
+        idx_p = filenames_clean.index(p)
+        idx_n = filenames_clean.index(n)
+
+        np_a_tmp = images[idx_a][np.newaxis, ...]
+        np_p_tmp = images[idx_p][np.newaxis, ...]
+        np_n_tmp = images[idx_n][np.newaxis, ...]
+        if i != 0:
+            np_a = np.concatenate([np_a, np_a_tmp], axis=0)
+            np_p = np.concatenate([np_p, np_p_tmp], axis=0)
+            np_n = np.concatenate([np_n, np_n_tmp], axis=0)
+        else:
+            np_a = np_a_tmp
+            np_p = np_p_tmp
+            np_n = np_n_tmp
+
+    return [np_a, np_p, np_n]
