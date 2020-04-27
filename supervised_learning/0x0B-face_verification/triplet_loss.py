@@ -12,6 +12,7 @@ class TripletLoss(Layer):
         super(TripletLoss, self).__init__(**kwargs)
         self.alpha = alpha
 
+
     def triplet_loss(self, inputs):
         """ Calculate Triplet Loss """
         A, P, N = inputs
@@ -20,11 +21,10 @@ class TripletLoss(Layer):
 
         out1 = K.backend.sum(K.backend.square(distance1), axis=1)
         out2 = K.backend.sum(K.backend.square(distance2), axis=1)
+
         loss1 = K.layers.Subtract()([out1, out2]) + self.alpha
 
-        loss = K.backend.maximum(loss1, 0)
-        #loss = K.backend.maximum(loss1, tf.cast(K.backend.constant(0),
-        #                         tf.float32))
+        loss =  K.backend.maximum(loss1, 0)
 
         return loss
 
@@ -34,4 +34,6 @@ class TripletLoss(Layer):
                 output tensors from the last layer of the model, respectively
         Returns: the triplet loss tensor
         """
-        return self.triplet_loss(inputs)
+        loss = self.triplet_loss(inputs)
+        self.add_loss(loss)
+        return loss
