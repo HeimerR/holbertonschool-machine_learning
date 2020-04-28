@@ -1,10 +1,52 @@
 #!/usr/bin/env python3
 """ Model """
 import tensorflow as tf
-shuffle_data = __import__('2-shuffle_data').shuffle_data
-create_batch_norm_layer = __import__('14-batch_norm').create_batch_norm_layer
-learning_rate_decay = __import__('12-learning_rate_decay').learning_rate_decay
-create_Adam_op = __import__('10-Adam').create_Adam_op
+import numpy as np
+
+
+def create_Adam_op(loss, alpha, beta1, beta2, epsilon):
+    """ creates the training operation for a neural network
+    in tensorflow using the Adam optimization algorithm
+    """
+    return tf.train.AdamOptimizer(alpha, beta1, beta2, epsilon).minimize(loss)
+
+
+def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
+    """ creates a learning rate decay operation
+    in tensorflow using inverse time decay
+    """
+    return (tf.train.inverse_time_decay(alpha, global_step,
+            decay_step, decay_rate, staircase=True))
+
+
+def create_batch_norm_layer(prev, n, activation):
+    """  creates a batch normalization layer for a neural network
+    in tensorflow
+    """
+    init = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
+    x = tf.layers.Dense(units=n, activation=None, kernel_initializer=init)
+
+    m, s = tf.nn.moments(x(prev), axes=[0])
+
+    beta = tf.Variable(tf.constant(0.0, shape=[n]),
+                       name='beta', trainable=True)
+    gamma = tf.Variable(tf.constant(1.0, shape=[n]),
+                        name='gamma', trainable=True)
+
+    f = (tf.nn.batch_normalization(x(prev), mean=m, variance=s,
+         offset=beta, scale=gamma, variance_epsilon=1e-8))
+    if activation is None:
+        return f
+    return activation(f)
+
+
+def shuffle_data(X, Y):
+    """  shuffles the data points in two matrices the same way """
+    st0 = np.random.get_state()
+    X_shuffled = np.random.permutation(X)
+    np.random.set_state(st0)
+    Y_shuffled = np.random.permutation(Y)
+    return X_shuffled, Y_shuffled
 
 
 def forward_prop(x, layer_sizes=[], activations=[]):
