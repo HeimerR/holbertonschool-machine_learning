@@ -89,8 +89,13 @@ class NST:
 
     def load_model(self):
         """ loads the model for neural style transfer """
-        vgg = tf.keras.applications.vgg19.VGG19(include_top=False,
-                                                weights='imagenet')
+        vgg_pre = tf.keras.applications.vgg19.VGG19(include_top=False,
+                                                    weights='imagenet')
+
+        custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
+        vgg_pre.save("base_model")
+        vgg = tf.keras.models.load_model("base_model",
+                                         custom_objects=custom_objects)
         for layer in vgg.layers:
             layer.trainable = False
 
