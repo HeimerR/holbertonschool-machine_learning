@@ -80,7 +80,6 @@ class NST:
 
         mth = tf.image.ResizeMethod.BICUBIC
         image = tf.expand_dims(image, 0)
-        image = image / 255
         image = tf.image.resize_bicubic(image, (new_h, new_w),
                                         align_corners=False)
         """
@@ -90,6 +89,7 @@ class NST:
                                              method=mth)
         """
 
+        image = image / 255
         image = tf.clip_by_value(image, clip_value_min=0, clip_value_max=1)
         # img = tf.image.rgb_to_hsv(img)
         """
