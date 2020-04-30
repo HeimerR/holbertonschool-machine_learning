@@ -38,15 +38,13 @@ class NST:
             alpha - the weight for content cost
             beta - the weight for style cost
         """
-        ls = len(style_image.shape)
-        sch = style_image.shape[2]
-        lc = len(content_image.shape)
-        cch = content_image.shape[2]
-        if not isinstance(style_image, np.ndarray) and ls != 3 and sch != 3:
+        if (not isinstance(style_image, np.ndarray) or
+           len(style_image.shape) != 3 or style_image.shape[2] != 3):
             msg = "style_image must be a numpy.ndarray with shape (h, w, 3)"
             raise TypeError(msg)
 
-        if not isinstance(content_image, np.ndarray) and lc != 3 and cch != 3:
+        if (not isinstance(content_image, np.ndarray) or
+           len(content_image.shape) != 3 or content_image.shape[2] != 3):
             msg = "content_image must be a numpy.ndarray with shape (h, w, 3)"
             raise TypeError(msg)
 
@@ -64,9 +62,9 @@ class NST:
     def scale_image(image):
         """ rescales an image such that its pixels values are between
         0 and 1 and its largest side is 512 pixels """
-        li = len(image.shape)
-        ich = image.shape[2]
-        if not isinstance(image, np.ndarray) and li != 3 and ich != 3:
+
+        if (not isinstance(image, np.ndarray) or
+           len(image.shape) != 3 or image.shape[2] != 3):
             msg = "image must be a numpy.ndarray with shape (h, w, 3)"
             raise TypeError(msg)
 
