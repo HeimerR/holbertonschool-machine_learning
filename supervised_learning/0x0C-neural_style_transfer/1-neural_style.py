@@ -90,8 +90,9 @@ class NST:
     def load_model(self):
         """ loads the model for neural style transfer """
         vgg = tf.keras.applications.vgg19.VGG19(include_top=False,
-                                                pooling='max',
+                                                pooling='avg',
                                                 weights='imagenet')
+        vgg.trainable = False
         for layer in vgg.layers:
             layer.trainable = False
 
