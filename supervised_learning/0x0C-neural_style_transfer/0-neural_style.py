@@ -80,24 +80,8 @@ class NST:
         image = tf.expand_dims(image, 0)
         image = tf.image.resize_bicubic(image, (new_h, new_w),
                                         align_corners=False)
-        """
-        img = tf.image.resize_image_with_pad(image,
-                                             new_h,
-                                             new_w,
-                                             method=mth)
-        """
 
         image = image / 255
         image = tf.clip_by_value(image, clip_value_min=0, clip_value_max=1)
-        # img = tf.image.rgb_to_hsv(img)
-        """
-        print("---"*10)
-        print(np.max(image))
-        print(np.min(image))
-        print("---"*10)
-        """
-        # img = tf.saturate_cast(img, dtype=tf.float32)
-        # img = tf.dtypes.cast(img, tf.float32)
-        # new_image = tf.expand_dims(img, 0)
 
         return image
