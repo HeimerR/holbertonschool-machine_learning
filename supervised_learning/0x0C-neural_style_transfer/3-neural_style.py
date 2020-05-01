@@ -121,13 +121,13 @@ class NST:
 
     def generate_features(self):
         """ extracts the features used to calculate neural style cost """
-        self.model.summary()
-        outputs = self.model(self.style_image)
+        s_image = tf.convert_to_tensor(self.style_image)
+        c_image = tf.convert_to_tensor(self.content_image)
+        outputs = self.model(s_image)
         list_gram = []
         for out in outputs[:-1]:
-            out_t = tf.convert_to_tensor(out)
-            list_gram = list_gram + [self.gram_matrix(out_t)]
+            list_gram = list_gram + [self.gram_matrix(out)]
 
         self.gram_style_features = list_gram
 
-        self.content_feature = self.model(self.content_image)[-1]
+        self.content_feature = self.model(c_image)[-1]
