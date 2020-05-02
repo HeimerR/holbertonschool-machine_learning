@@ -168,7 +168,6 @@ class NST:
 
     def content_cost(self, content_output):
         """ Calculates the content cost for the generated image """
-        print(content_output.shape)
         s = self.content_feature.shape
         if not isinstance(content_output, (tf.Tensor, tf.Variable)):
             raise TypeError("content_output must be a tensor of shape {}"
