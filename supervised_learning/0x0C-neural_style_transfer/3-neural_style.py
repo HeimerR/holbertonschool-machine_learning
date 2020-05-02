@@ -48,9 +48,9 @@ class NST:
             msg = "content_image must be a numpy.ndarray with shape (h, w, 3)"
             raise TypeError(msg)
 
-        if alpha < 0:
+        if not isinstance(alpha, (int, float)) or alpha < 0:
             raise TypeError("alpha must be a non-negative number")
-        if beta < 0:
+        if not isinstance(beta, (int, float)) or beta < 0:
             raise TypeError("beta must be a non-negative number")
         tf.enable_eager_execution()
         self.content_image = self.scale_image(content_image)
@@ -121,13 +121,15 @@ class NST:
 
     def generate_features(self):
         """ extracts the features used to calculate neural style cost """
-        s_image = tf.convert_to_tensor(self.style_image)
-        c_image = tf.convert_to_tensor(self.content_image)
-        outputs = self.model(s_image)
+        vgg19 = tf.keras.applications.vgg19
+        content = vgg19.preprocess_input(self.content_image * 255)
+        style = vgg19.preprocess_input(self.style_image * 255)
+        out_content = self.model(content)
+        outputs = self.model(style)
         list_gram = []
         for out in outputs[:-1]:
             list_gram = list_gram + [self.gram_matrix(out)]
 
         self.gram_style_features = list_gram
 
-        self.content_feature = self.model(c_image)[-1]
+        self.content_feature = out_content[-1]
