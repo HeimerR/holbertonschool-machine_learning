@@ -156,12 +156,12 @@ class NST:
         if (not type(style_outputs) is list
            or len(self.style_layers) != len(style_outputs)):
             le = len(self.style_layers)
-            m = "style_outputs must be a list with a length of {l}".format(le)
+            m = "style_outputs must be a list with a length of {}".format(le)
             raise TypeError(m)
         weight_per_style_layer = 1.0 / float(len(self.style_layers))
-        temp = []
+        loss = 0.0
         for target, style in zip(self.gram_style_features, style_outputs):
-            temp = temp + [self.layer_style_cost(style, target)
-                           * weight_per_style_layer]
+            loss = loss + (self.layer_style_cost(style, target)
+                           * weight_per_style_layer)
 
-        return tf.math.reduce_sum(temp)
+        return loss
