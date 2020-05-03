@@ -216,15 +216,17 @@ class NST:
         grad = tape.gradient(J_total, generated_image)
         return grad, J_total, J_content, J_style
 
-    def generate_image(self, iterations=1000, step=None, lr=0.01, beta1=0.9, beta2=0.99):
+    def generate_image(self, iterations=1000, step=None, lr=0.01,
+                       beta1=0.9, beta2=0.99):
         """ generate the neural style transfered image """
         if not type(iterations) == int:
             raise TypeError("iterations must be an integer")
         if iterations < 0:
             raise ValueError("iterations must be positive")
-        if step != None:
+        if step is not None:
             if step < 0 or step > iterations:
-                raise ValueError("step must be positive and less than iterations")
+                m = "step must be positive and less than iterations"
+                raise ValueError(m)
         if not isinstance(lr, (int, float)):
             raise TypeError("lr must be a number")
         if lr < 0:
@@ -240,19 +242,23 @@ class NST:
 
         generated_image = self.content_image
         generated_image = tf.Variable(generated_image, dtype=tf.float32)
-        opt = tf.train.AdamOptimizer(learning_rate=lr, beta1=beta1, beta2=2)
+        opt = tf.train.AdamOptimizer(learning_rate=lr,
+                                     beta1=beta1,
+                                     beta2=beta2)
         best_loss, best_img = float('inf'), None
         for i in range(iterations):
-            grad, J_total, J_content, J_style = self.compute_grads(generated_image)
+            grad, J_total, J_content, J_style = (self.compute_grads
+                                                 (generated_image))
             opt.apply_gradients([(grad, generated_image)])
-            clipped = tf.clip_by_value(generated_image, 0, 1)
-            generated_image.assign(clipped)
+            # clipped = tf.clip_by_value(generated_image, 0, 1)
+            # generated_image.assign(clipped)
             if J_total < best_loss:
-                # Update best loss and best image from total loss.
-                best_loss = J_total
+                best_loss = J_total.numpy()
                 best_img = generated_image.numpy()
-            if not step is  None:
+            if step is not None:
                 if step == 0 or i % step == 0 or i == iterations - 1:
                     m = ("Cost at iteration {}: {}, content {}, style {}"
                          .format(i, J_total, J_content, J_style))
                     print(m)
+
+        return best_img[-1, :, :], best_loss
