@@ -221,15 +221,17 @@ class NST:
         """ generate the neural style transfered image """
         if not type(iterations) == int:
             raise TypeError("iterations must be an integer")
-        if iterations < 0:
+        if iterations <= 0:
             raise ValueError("iterations must be positive")
         if step is not None:
-            if step < 0 or step > iterations:
+            if not type(step) == int:
+                raise TypeError("step must be an integer")
+            if step <= 0 or step >= iterations:
                 m = "step must be positive and less than iterations"
                 raise ValueError(m)
         if not isinstance(lr, (int, float)):
             raise TypeError("lr must be a number")
-        if lr < 0:
+        if lr <= 0:
             raise ValueError("lr must be positive")
         if type(beta1) != float:
             raise TypeError("beta1 must be a float")
@@ -237,7 +239,7 @@ class NST:
             raise ValueError("beta1 must be in the range [0, 1]")
         if type(beta2) != float:
             raise TypeError("beta2 must be a float")
-        if beta2 < 0 or beta1 > 1:
+        if beta2 < 0 or beta2 > 1:
             raise ValueError("beta2 must be in the range [0, 1]")
 
         generated_image = self.content_image
