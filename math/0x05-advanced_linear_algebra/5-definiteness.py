@@ -37,7 +37,7 @@ def definiteness(matrix):
     # classify
 
     if len(matrix) == 1 and matrix[0][0] == 0:
-        return None
+        return "Positive definite"
     if all(dets > 0):
         return "Positive definite"
     if all(dets[::2] < 0) and all(dets[1::2] > 0):
