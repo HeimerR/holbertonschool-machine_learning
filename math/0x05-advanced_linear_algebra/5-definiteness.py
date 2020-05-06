@@ -36,11 +36,13 @@ def definiteness(matrix):
 
     # classify
 
+    if len(matrix) == 1 and matrix[0][0] == 0:
+        return None
     if all(dets > 0):
         return "Positive definite"
     if all(dets[::2] < 0) and all(dets[1::2] > 0):
         return "Negative definite"
-    if dets[-1] != 0 or (len(matrix) == 1 and matrix[0][0] == 0):
+    if dets[-1] != 0:
         return "Indefinite"
     if dets[-1] == 0 and all(dets[:-1] > 0):
         return "Positive semi-definite"
