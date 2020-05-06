@@ -23,8 +23,6 @@ def definiteness(matrix):
     """
     if not isinstance(matrix, np.ndarray):
         raise TypeError("matrix must be a numpy.ndarray")
-    if matrix.shape[0] == 1 and matrix.shape[1] == 0:
-        return "Indefinite"
     if len(matrix.shape) != 2 or matrix.shape[0] != matrix.shape[1]:
         return None
 
