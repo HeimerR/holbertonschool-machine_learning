@@ -252,8 +252,8 @@ class NST:
             grad, J_total, J_content, J_style = (self.compute_grads
                                                  (generated_image))
             opt.apply_gradients([(grad, generated_image)])
-            # clipped = tf.clip_by_value(generated_image, 0, 1)
-            # generated_image.assign(clipped)
+            clipped = tf.clip_by_value(generated_image, 0, 1)
+            generated_image.assign(clipped)
             if J_total < best_loss:
                 best_loss = J_total.numpy()
                 best_img = generated_image.numpy()
