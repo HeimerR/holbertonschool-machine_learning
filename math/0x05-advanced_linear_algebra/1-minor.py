@@ -21,7 +21,9 @@ def determinant(matrix):
         raise ValueError("matrix must be a square matrix")
     if lm == 1 and len(matrix[0]) == 1:
         return matrix[0][0]
+
     # for 2x2 matrix minimun case
+
     if lm == 2:
         a = matrix[0][0]
         b = matrix[0][1]
@@ -29,18 +31,13 @@ def determinant(matrix):
         d = matrix[1][1]
         det = a*d - c*b
         return det
-    # for general case
+
+    # for general case --recursive
+
     det = 0
     for i, k in enumerate(matrix[0]):
-        new_matrix = []
-        for m in matrix[1:]:
-            sub_matrix = []
-            for n in range(len(m)):
-                if n != i:
-                    sub_matrix.append(m[n])
-            new_matrix.append(sub_matrix)
-
-        det += k * (-1)**(i) * determinant(new_matrix)
+        new_m = [[m[n] for n in range(len(m)) if n != i]for m in matrix[1:]]
+        det += k * (-1)**(i) * determinant(new_m)
 
     return det
 
@@ -57,6 +54,7 @@ def minor(matrix):
 
         Returns: the minor matrix of matrix
     """
+
     if (type(matrix) != list or len(matrix) == 0 or
        not all([type(m) == list for m in matrix])):
         raise TypeError("matrix must be a list of lists")
@@ -67,20 +65,27 @@ def minor(matrix):
         raise ValueError("matrix must be a non-empty square matrix")
     if lm == 1 and len(matrix[0]) == 1:
         return [[1]]
+
+    # calculate minors
+
     new_matrix = []
     for i in range(lm):
         sub_new_matrix = []
         for j in range(lm):
 
-            temp_m = []
-            for m in range(lm):
-                sub_m = []
-                for n in range(lm):
-                    if n != j and m != i:
-                        sub_m.append(matrix[m][n])
-                if len(sub_m) == lm - 1:
-                    temp_m.append(sub_m)
+            # set sub matrix
+
+            temp_m = [[matrix[m][n] for n in range(lm) if (n != j and m != i)]
+                      for m in range(lm)]
+
+            # delete empty nodes
+
+            temp_m = [m for m in temp_m if len(m) == lm-1]
+
+            # calculate and add determinant
 
             sub_new_matrix.append(determinant(temp_m))
+
         new_matrix.append(sub_new_matrix)
+
     return new_matrix

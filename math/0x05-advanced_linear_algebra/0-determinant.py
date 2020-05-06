@@ -21,7 +21,9 @@ def determinant(matrix):
         raise ValueError("matrix must be a square matrix")
     if lm == 1 and len(matrix[0]) == 1:
         return matrix[0][0]
+
     # for 2x2 matrix minimun case
+
     if lm == 2:
         a = matrix[0][0]
         b = matrix[0][1]
@@ -29,17 +31,12 @@ def determinant(matrix):
         d = matrix[1][1]
         det = a*d - c*b
         return det
-    # for general case
+
+    # for general case --recursive
+
     det = 0
     for i, k in enumerate(matrix[0]):
-        new_matrix = []
-        for m in matrix[1:]:
-            sub_matrix = []
-            for n in range(len(m)):
-                if n != i:
-                    sub_matrix.append(m[n])
-            new_matrix.append(sub_matrix)
-
-        det += k * (-1)**(i) * determinant(new_matrix)
+        new_m = [[m[n] for n in range(len(m)) if n != i]for m in matrix[1:]]
+        det += k * (-1)**(i) * determinant(new_m)
 
     return det
