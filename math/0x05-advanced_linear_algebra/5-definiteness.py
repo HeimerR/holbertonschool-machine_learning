@@ -40,8 +40,10 @@ def definiteness(matrix):
         return "Positive definite"
     if all(dets[::2] < 0) and all(dets[1::2] > 0):
         return "Negative definite"
-    if all(dets >= 0):
+    if dets[-1] != 0:
+        return "Indefinite"
+    if dets[-1] == 0 and all(dets[:-1] > 0):
         return "Positive semi-definite"
-    if all(dets[::2] <= 0) and all(dets[1::2] >= 0):
+    if dets[-1] == 0 and all(dets[2:-1:2] < 0) and all(dets[1:-1:2] > 0):
         return "Negative semi-definite"
-    return "Indefinite"
+    return None
