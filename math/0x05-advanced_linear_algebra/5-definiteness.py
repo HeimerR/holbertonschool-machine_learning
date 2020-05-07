@@ -26,6 +26,10 @@ def definiteness(matrix):
     if len(matrix.shape) != 2 or matrix.shape[0] != matrix.shape[1]:
         return None
 
+    transpose = np.transpose(matrix)
+    if not np.array_equal(transpose, matrix):
+        return None
+
     # create a list of sub matrices (up-left to down-right)
 
     sub_m = [matrix[:i, :i] for i in range(1, matrix.shape[0]+1)]
