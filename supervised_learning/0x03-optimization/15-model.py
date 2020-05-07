@@ -94,10 +94,10 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001,
     accuracy = calculate_accuracy(y, y_pred)
     tf.add_to_collection('accuracy', accuracy)
 
+    global_step = tf.Variable(0, trainable=False)
+    alpha = learning_rate_decay(alpha, decay_rate, global_step, 1)
     train_op = create_Adam_op(loss, alpha, beta1, beta2, epsilon)
     tf.add_to_collection('train_op', train_op)
-
-    global_step = tf.Variable(0, trainable=False)
 
     saver = tf.train.Saver()
     init = tf.global_variables_initializer()
@@ -124,7 +124,6 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001,
             print("\tValidation Cost: {}".format(cost_v))
             print("\tValidation Accuracy: {}".format(acc_v))
             if epoch < epochs:
-                alpha = learning_rate_decay(alpha, decay_rate, global_step, 1)
                 X_shuffled, Y_shuffled = (shuffle_data(Data_train[0],
                                           Data_train[1]))
                 for step in range(iterations):
