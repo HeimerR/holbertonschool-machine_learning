@@ -24,8 +24,6 @@ def mean_cov(X):
     if X.shape[0] < 2:
         raise ValueError("X must contain multiple data points")
     mean = np.mean(X, axis=0)
-    print(X.shape[0])
     deviation = np.add(X, -mean)
-    factor = 1/(X.shape[0])
-    cov = np.matmul(X.T, deviation) * factor
+    cov = np.matmul(X.T, deviation) / X.shape[0]
     return mean, cov
