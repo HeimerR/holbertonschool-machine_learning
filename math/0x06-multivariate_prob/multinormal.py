@@ -34,3 +34,36 @@ class MultiNormal:
         deviation = np.tile(self.mean.reshape(-1), n).reshape(n, d)
         cov = data.T - deviation
         self.cov = np.matmul(cov.T, cov)/(n - 1)
+
+    def pdf(self, x):
+        """ x is a numpy.ndarray of shape (d, 1) containing the data point
+            whose PDF should be calculated
+
+                - d is the number of dimensions of the Multinomial instance
+
+            If x is not a numpy.ndarray, raise a TypeError with the message:
+            "x must by a numpy.ndarray"
+            If x is not of shape (d, 1), raise a ValueError with the message:
+            "x mush have the shape ({d}, 1)"
+
+        Returns the value of the PDF
+        """
+        if not isinstance(x, np.ndarray):
+            raise TypeError("x must by a numpy.ndarray")
+        if len(x.shape) != 2 or x.shape[1] != 1:
+            raise ValueError("x mush have the shape ({d}, 1)")
+
+        # pdf formula -- multivar
+
+        d = self.cov.shape[0]
+        det = np.linalg.det(self.cov)
+        inv = np.linalg.inv(self.cov)
+        f1 = 1 / np.sqrt(((2*np.pi)**d)*det)
+        f21 = -(x-self.mean).T
+        f22 = np.matmul(f21, inv)
+        f23 = (x - self.mean) / 2
+        f24 = np.matmul(f22, f23)
+        f2 = np.exp(f24)
+        pdf = f1 * f2
+
+        return pdf.reshape(-1)[0]
