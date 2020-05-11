@@ -52,7 +52,7 @@ class MultiNormal:
             raise TypeError("x must by a numpy.ndarray")
         d = self.cov.shape[0]
         if len(x.shape) != 2 or x.shape[1] != 1:
-            raise ValueError("x mush have the shape ({}, 1)".format(d))
+            raise ValueError("x must have the shape ({}, 1)".format(d))
 
         # pdf formula -- multivar
 
