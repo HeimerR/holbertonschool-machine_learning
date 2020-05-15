@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Gradients """
 import numpy as np
+Q_affinities = __import__('5-Q_affinities').Q_affinities
 
 
 def grads(Y, P):
@@ -12,7 +13,7 @@ def grads(Y, P):
         the P affinities of X
 
         Returns: (dY, Q)
-            - dY is a numpy.ndarray of shape (n, n) containing
+            - dY is a numpy.ndarray of shape (n, ndim) containing
             the gradients of Y
             - Q is a numpy.ndarray of shape (n, n) containing
             the Q affinities of Y
