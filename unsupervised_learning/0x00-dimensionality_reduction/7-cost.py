@@ -12,9 +12,13 @@ def cost(P, Q):
 
     """
     min_val = Q[Q > 0].min()
-    Q = np.where(Q != 0, Q, min_val)
+    Q = np.where(Q != 0, Q, 1e-12)
     min_val = P[P > 0].min()
-    P = np.where(P != 0, P, min_val)
+    P = np.where(P != 0, P, 1e-12)
+    """
+    P = np.maximum(P, 1e-12)
+    Q = np.maximum(Q, 1e-12)
+    """
     Div = P / Q
     C = np.sum(P * np.log(Div))
     return C
