@@ -38,6 +38,11 @@ def likelihood(x, n, P):
         raise TypeError("P must be a 1D numpy.ndarray")
     if np.amin(P) < 0 or np.amax(P) > 1:
         raise ValueError("All values in P must be in the range [0, 1]")
+    """
     fact = np.math.factorial
     tmp = fact(n) / (fact(x) * fact(n - x))
     return tmp * (P**x) * ((1 - P)**(n - x))
+    """
+    npfact = np.math.factorial
+    return (npfact(n) / (npfact(x) * npfact(n - x))
+            * pow(P, x) * pow((1 - P), n - x))
