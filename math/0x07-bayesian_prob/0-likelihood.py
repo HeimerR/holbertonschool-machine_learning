@@ -34,8 +34,6 @@ def likelihood(x, n, P):
         mg = "x must be an integer that is greater than or equal to 0"
         raise ValueError(msg)
     """
-    if x > n:
-        raise ValueError("x cannot be greater than n")
     if not isinstance(P, np.ndarray) or len(P.shape) != 1 or P.shape[0] < 1:
         raise TypeError("P must be a 1D numpy.ndarray")
     if not isinstance(n, int) or n < 1:
@@ -43,6 +41,8 @@ def likelihood(x, n, P):
     if not isinstance(x, int) or x < 0:
         raise ValueError("x must be an integer that is greater than or equal "
                          "to 0")
+    if x > n:
+        raise ValueError("x cannot be greater than n")
     """
     if x > n:
         raise ValueError("x cannot be greater than n")
