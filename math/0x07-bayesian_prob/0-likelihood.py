@@ -35,9 +35,9 @@ def likelihood(x, n, P):
         raise ValueError(msg)
     if x > n:
         raise ValueError("x cannot be greater than n")
+    """
     if not isinstance(P, np.ndarray) or len(P.shape) != 1 or P.shape[0] < 1:
         raise TypeError("P must be a 1D numpy.ndarray")
-    """
     if not isinstance(n, int) or n < 1:
         raise ValueError("n must be a positive integer")
     if not isinstance(x, int) or x < 0:
@@ -45,8 +45,11 @@ def likelihood(x, n, P):
                          "to 0")
     if x > n:
         raise ValueError("x cannot be greater than n")
+    """
     if not isinstance(P, np.ndarray) or len(P.shape) != 1 or P.shape[0] < 1:
         raise TypeError("P must be a 1D numpy.ndarray")
+    """
+
     if np.amin(P) < 0 or np.amax(P) > 1:
         raise ValueError("All values in P must be in the range [0, 1]")
     fact = np.math.factorial
