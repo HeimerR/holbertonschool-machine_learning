@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """ Intersection """
-import numpy as np
+from scipy import math, special
 
 
 def intersection(x, n, P, Pr):
     """ calculates the intersection of obtaining this data with the various
         hypothetical probabilities
     """
-
-    fact = np.math.factorial
-    tmp = fact(n) / (fact(x) * fact(n - x))
-    likelihood = tmp * (P**x) * ((1 - P)**(n - x))
+    factorial = special.factorial
+    likelihood = ((factorial(n) / (factorial(x) * factorial(n - x)))
+                  * (P ** x) * ((1 - P) ** (n - x)))
+    # fact = np.math.factorial
+    # tmp = fact(n) / (fact(x) * fact(n - x))
+    # likelihood = tmp * (P**x) * ((1 - P)**(n - x))
     return likelihood * Pr
 
 
@@ -18,7 +20,7 @@ def marginal(x, n, P, Pr):
     """
         calculates the marginal probability of obtaining the data
     """
-    return np.sum(intersection(x, n, P, Pr))
+    return intersection(x, n, P, Pr)
 
 
 def posterior(x, n, p1, p2):
@@ -61,6 +63,6 @@ def posterior(x, n, p1, p2):
         raise TypeError("p2 must be a float in the range [0, 1]")
     if p2 <= p1:
         raise ValueError("p2 must be greater than p1")
-    P = np.array([p1, p2])
-    Pr = 1/(p2-p1)
+    Pr = p2-p1
+    P = (p2-p1)/2
     return intersection(x, n, P, Pr) / marginal(x, n, P, Pr)
