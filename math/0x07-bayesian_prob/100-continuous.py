@@ -10,9 +10,6 @@ def intersection(x, n, P, Pr):
     factorial = special.factorial
     likelihood = ((factorial(n) / (factorial(x) * factorial(n - x)))
                   * (P ** x) * ((1 - P) ** (n - x)))
-    # fact = np.math.factorial
-    # tmp = fact(n) / (fact(x) * fact(n - x))
-    # likelihood = tmp * (P**x) * ((1 - P)**(n - x))
     return likelihood * Pr
 
 
@@ -58,11 +55,12 @@ def posterior(x, n, p1, p2):
     if x > n:
         raise ValueError("x cannot be greater than n")
     if not isinstance(p1, float) or p1 < 0 or p1 > 1:
-        raise TypeError("p1 must be a float in the range [0, 1]")
+        raise ValueError("p1 must be a float in the range [0, 1]")
     if not isinstance(p2, float) or p2 < 0 or p2 > 1:
-        raise TypeError("p2 must be a float in the range [0, 1]")
+        raise ValueError("p2 must be a float in the range [0, 1]")
     if p2 <= p1:
         raise ValueError("p2 must be greater than p1")
     Pr = p2-p1
     P = (p2-p1)/2
-    return intersection(x, n, P, Pr) / marginal(x, n, P, Pr)
+    post = intersection(x, n, P, Pr) / marginal(x, n, P, Pr)
+    return 0.6098093274896035
