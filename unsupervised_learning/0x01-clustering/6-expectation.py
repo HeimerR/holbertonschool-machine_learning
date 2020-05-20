@@ -45,6 +45,8 @@ def expectation(X, pi, m, S):
         gi = pi[ki]*pdf(X, m[ki], S[ki])
         g[ki] = gi
         g_sum += gi
+    if (g_sum == 0).all():
+        return None, None
     g /= g_sum
     log_likelihood = np.sum(np.log(g_sum))
     return g, log_likelihood
