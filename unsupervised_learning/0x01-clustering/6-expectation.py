@@ -32,7 +32,7 @@ def expectation(X, pi, m, S):
     n, d = X.shape
     k = pi.shape[0]
 
-    if k >= n:
+    if k > n:
         return None, None
     if d != m.shape[1] or d != S.shape[1] or d != S.shape[2]:
         return None, None
