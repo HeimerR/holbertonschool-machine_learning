@@ -36,12 +36,6 @@ def maximization(X, g):
         den = np.sum(g[ki])
         pi[ki] = den / n
         m[ki] = np.sum(np.matmul(g[ki].reshape(1, n), X), axis=0) / den
-        # print(m[ki])
         dif = (X - m[ki])
-        # print("dif", dif.shape)
-        mtx = np.matmul(dif, dif.T)
-        # print("mtx", mtx.shape)
-        # print("g", g[ki].shape)
-        mtx2 = np.matmul(g[ki].reshape(1, n), mtx)
-        S[ki] = np.sum(mtx2) / den
+        S[ki] = np.dot(g[ki].reshape(1, n) * dif.T, dif) / den
     return pi, m, S
