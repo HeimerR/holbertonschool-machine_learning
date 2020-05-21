@@ -29,6 +29,11 @@ def maximization(X, g):
     if n != g.shape[1]:
         return None, None, None
 
+    probs = np.sum(g, axis=0)
+    tester = np.ones((n, ))
+    if not np.isclose(probs, tester).all():
+        return None, None, None
+
     pi = np.zeros((k,))
     m = np.zeros((k, d))
     S = np.zeros((k, d, d))
