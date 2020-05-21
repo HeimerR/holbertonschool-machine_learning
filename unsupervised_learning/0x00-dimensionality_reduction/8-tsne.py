@@ -37,7 +37,7 @@ def tsne(X, ndims=2, idims=50, perplexity=30.0, iterations=1000, lr=500):
     iY = np.zeros((n, ndims))
     for i in range(1, iterations + 1):
         dY, Q = grads(Y, P)
-        if i < 20:
+        if i <= 20:
             momentum = initial_momentum
         else:
             momentum = final_momentum
