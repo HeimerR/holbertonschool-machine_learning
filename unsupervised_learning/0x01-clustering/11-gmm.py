@@ -22,7 +22,7 @@ def gmm(X, k):
     """
     GMM = sklearn.mixture.GaussianMixture(n_components=k)
     G = GMM.fit(X)
-    L = GMM.fit_predict(X)
+    L = GMM.predict(X)
     bic = GMM.bic(X)
 
     return G.weights_, G.means_, G.covariances_, L, bic
