@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ BIC """
 import numpy as np
-expectation_maximization = __import__('7-EM').expectation_maximization
+expectation_maximization = __import__('8-EM').expectation_maximization
 
 
 def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
@@ -30,7 +30,7 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
                 means for the best number of clusters
             - S is a numpy.ndarray of shape (k, d, d) containing the
                 covariance matrices for the best number of clusters
-            - l is a numpy.ndarray of shape (kmax - kmin + 1) containing the
+            - l_t is a numpy.ndarray of shape (kmax - kmin + 1) containing the
                 log likelihood for each cluster size tested
             - b is a numpy.ndarray of shape (kmax - kmin + 1) containing the
                 BIC value for each cluster size tested
@@ -53,6 +53,24 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     if type(verbose) != bool:
         return None, None, None, None
 
+    n, d = X.shape
+    l_t = np.empty((kmax-kmin+1, ))
+    b = np.empty((kmax-kmin+1, ))
+    pi_t = []
+    m_t = []
+    S_t = []
     for k in range(kmin, kmax+1):
-        pi, m, S, g, l = expectation_maximization(X, k, iterations, tol, verbose)
-
+        pi, m, S, g, li = expectation_maximization(X,
+                                                   k,
+                                                   iterations,
+                                                   tol,
+                                                   verbose)
+        pi_t.append(pi)
+        m_t.append(m)
+        S_t.append(S)
+        l_t[k-1] = li
+        p = (k * d * (d+1) / 2) + (d * k) + k - 1
+        b[k-1] = p*np.log(n) - 2*li
+    best_k = np.argmin(b)
+    best_result = (pi_t[best_k], m_t[best_k], S_t[best_k])
+    return best_k+1, best_result, l_t, b
