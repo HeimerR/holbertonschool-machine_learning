@@ -36,8 +36,6 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
         var_k = []
         for k in range(kmin, kmax+1):
             C, clss = kmeans(X, k, iterations)
-            if C is None or clss is None:
-                return None, None
             results.append((C, clss))
             var = variance(X, C)
             var_k.append(var)
