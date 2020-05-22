@@ -51,11 +51,17 @@ def kmeans(X, k, iterations=1000):
             dist = np.sqrt(((X - C[:, np.newaxis])**2).sum(axis=-1))
             clss = np.argmin(dist, axis=0)
             for j in range(k):
+                """
                 data_indx = np.where(clss == j)
                 if len(data_indx[0]) == 0:
                     C[j] = np.random.uniform(low, high, (1, d))
                 else:
                     C[j] = np.mean(X[data_indx], axis=0)
+                """
+                if (len(X[clss == j]) == 0):
+                    C[j, :] = np.random.uniform(low, high, size=(1, d))
+                else:
+                    C[j, :] = (X[clss == j].mean(axis=0))
             if (C == C_prev).all():
                 return C, clss
             C_prev = np.copy(C)
