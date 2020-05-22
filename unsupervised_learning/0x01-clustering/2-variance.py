@@ -23,14 +23,17 @@ def variance(X, C):
     if C.shape[0] >= X.shape[0]:
         return None
 
-    n, d = X.shape
-    k = C.shape[0]
-    xi = np.tile(X, k).reshape(n, k, d)
-    temp = C.reshape(-1)
-    ci = np.tile(temp, (n, 1)).reshape(n, k, d)
-    xc = xi-ci
-    dist = np.linalg.norm(xc, axis=2)
-    clss = np.min(dist, axis=1)
-    variance = np.sum(clss**2)
+    try:
+        n, d = X.shape
+        k = C.shape[0]
+        xi = np.tile(X, k).reshape(n, k, d)
+        temp = C.reshape(-1)
+        ci = np.tile(temp, (n, 1)).reshape(n, k, d)
+        xc = xi-ci
+        dist = np.linalg.norm(xc, axis=2)
+        clss = np.min(dist, axis=1)
+        variance = np.sum(clss**2)
 
-    return np.sum(variance)
+        return np.sum(variance)
+    except Exception:
+        return None
