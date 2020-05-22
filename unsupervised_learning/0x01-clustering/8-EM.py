@@ -39,7 +39,7 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
         return None, None, None, None, None
     if type(k) != int or k <= 0 or X.shape[0] <= k:
         return None, None, None, None, None
-    if type(iterations) != int or iterations < 0:
+    if type(iterations) != int or iterations <= 0:
         return None, None, None, None, None
     if type(tol) != float or tol < 0:
         return None, None, None, None, None
