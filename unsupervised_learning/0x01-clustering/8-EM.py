@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-" Clustering: k-means and Gaussian Mixture Model & EM technique "
-
+""" EM """
 import numpy as np
 initialize = __import__('4-initialize').initialize
 expectation = __import__('6-expectation').expectation
