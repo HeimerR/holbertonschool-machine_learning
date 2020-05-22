@@ -65,6 +65,6 @@ def kmeans(X, k, iterations=1000):
             if (C == C_prev).all():
                 return C, clss
             C_prev = np.copy(C)
-        return C, clss
     except Exception:
         return None, None
+    return C, clss
