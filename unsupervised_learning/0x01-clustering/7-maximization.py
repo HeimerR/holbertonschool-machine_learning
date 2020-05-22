@@ -18,29 +18,32 @@ def maximization(X, g):
             - S is a numpy.ndarray of shape (k, d, d) containing the updated
                 covariance matrices for each cluster
     """
-    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
-        return None, None, None
-    if not isinstance(g, np.ndarray) or len(X.shape) != 2:
-        return None, None, None
+    try:
+        if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+            return None, None, None
+        if not isinstance(g, np.ndarray) or len(X.shape) != 2:
+            return None, None, None
 
-    n, d = X.shape
-    k = g.shape[0]
+        n, d = X.shape
+        k = g.shape[0]
 
-    if n != g.shape[1]:
+        if n != g.shape[1]:
+            return None, None, None
+
+        probs = np.sum(g, axis=0)
+        tester = np.ones((n, ))
+        if not np.isclose(probs, tester).all():
+            return None, None, None
+
+        pi = np.zeros((k,))
+        m = np.zeros((k, d))
+        S = np.zeros((k, d, d))
+        for ki in range(k):
+            den = np.sum(g[ki])
+            pi[ki] = den / n
+            m[ki] = np.sum(np.matmul(g[ki].reshape(1, n), X), axis=0) / den
+            dif = (X - m[ki])
+            S[ki] = np.dot(g[ki].reshape(1, n) * dif.T, dif) / den
+        return pi, m, S
+    except Exception:
         return None, None, None
-
-    probs = np.sum(g, axis=0)
-    tester = np.ones((n, ))
-    if not np.isclose(probs, tester).all():
-        return None, None, None
-
-    pi = np.zeros((k,))
-    m = np.zeros((k, d))
-    S = np.zeros((k, d, d))
-    for ki in range(k):
-        den = np.sum(g[ki])
-        pi[ki] = den / n
-        m[ki] = np.sum(np.matmul(g[ki].reshape(1, n), X), axis=0) / den
-        dif = (X - m[ki])
-        S[ki] = np.dot(g[ki].reshape(1, n) * dif.T, dif) / den
-    return pi, m, S
