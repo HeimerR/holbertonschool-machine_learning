@@ -34,28 +34,25 @@ def kmeans(X, k, iterations=1000):
     if type(iterations) != int or iterations <= 0:
         return None, None
 
-    try:
-        low = np.amin(X, axis=0)
-        high = np.amax(X, axis=0)
-        n, d = X.shape
-        C_prev = np.random.uniform(low, high, (k, d))
-        C = np.zeros_like(C_prev)
-        for i in range(iterations):
-            xi = np.tile(X, k).reshape(n, k, d)
-            temp = C_prev.reshape(-1)
-            ci = np.tile(temp, (n, 1)).reshape(n, k, d)
-            xc = xi-ci
-            dist = np.linalg.norm(xc, axis=2)
-            clss = np.argmin(dist, axis=1)
-            for j in range(k):
-                data_indx = np.where(clss == j)
-                if len(data_indx[0]) == 0:
-                    C[j] = np.random.uniform(low, high, (1, d))
-                else:
-                    C[j] = np.mean(X[data_indx], axis=0)
-            if (C == C_prev).all():
-                return C, clss
-            C_prev = np.copy(C)
-        return C, clss
-    except Exception:
-        return None, None
+    low = np.amin(X, axis=0)
+    high = np.amax(X, axis=0)
+    n, d = X.shape
+    C_prev = np.random.uniform(low, high, (k, d))
+    C = np.zeros_like(C_prev)
+    for i in range(iterations):
+        xi = np.tile(X, k).reshape(n, k, d)
+        temp = C_prev.reshape(-1)
+        ci = np.tile(temp, (n, 1)).reshape(n, k, d)
+        xc = xi-ci
+        dist = np.linalg.norm(xc, axis=2)
+        clss = np.argmin(dist, axis=1)
+        for j in range(k):
+            data_indx = np.where(clss == j)
+            if len(data_indx[0]) == 0:
+                C[j] = np.random.uniform(low, high, (1, d))
+            else:
+                C[j] = np.mean(X[data_indx], axis=0)
+        if (C == C_prev).all():
+            return C, clss
+        C_prev = np.copy(C)
+    return C, clss
