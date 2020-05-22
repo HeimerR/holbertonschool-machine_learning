@@ -40,12 +40,16 @@ def kmeans(X, k, iterations=1000):
     C = np.random.uniform(low, high, (k, d))
     C_prev = np.copy(C)
     for i in range(iterations):
+        """
         xi = np.tile(X, k).reshape(n, k, d)
         temp = C.reshape(-1)
         ci = np.tile(temp, (n, 1)).reshape(n, k, d)
         xc = xi-ci
         dist = np.linalg.norm(xc, axis=2)
-        clss = np.argmin(dist, axis=1)
+        """
+        dist = np.sqrt(((X - C[:, np.newaxis])**2).sum(axis=-1))
+        # clss = np.argmin(dist, axis=1)
+        clss = np.argmin(dist, axis=0)
         for j in range(k):
             data_indx = np.where(clss == j)
             if len(data_indx[0]) == 0:
