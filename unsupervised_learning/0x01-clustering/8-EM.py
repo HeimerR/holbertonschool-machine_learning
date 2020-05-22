@@ -31,8 +31,8 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
                 means for each cluster
             - S is a numpy.ndarray of shape (k, d, d) containing the
                 covariance matrices for each cluster
-            - g is a numpy.ndarray of shape (k, n) containing the probabilities
-                for each data point in each cluster
+            - g is a numpy.ndarray of shape (k, n) containing the
+                probabilities for each data point in each cluster
             - l is the log likelihood of the model
     """
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
