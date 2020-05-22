@@ -26,45 +26,32 @@ def kmeans(X, k, iterations=1000):
         - clss is a numpy.ndarray of shape (n,) containing the index of the
             cluster in C that each data point belongs to
     """
-    try:
-        if not isinstance(X, np.ndarray) or len(X.shape) != 2:
-            return None, None
-        if type(k) != int or k <= 0 or X.shape[0] <= k:
-            return None, None
-        if type(iterations) != int or iterations <= 0:
-            return None, None
-
-        low = np.amin(X, axis=0)
-        high = np.amax(X, axis=0)
-        n, d = X.shape
-        C = np.random.uniform(low, high, (k, d))
-        C_prev = np.copy(C)
-        for i in range(iterations):
-            """
-            xi = np.tile(X, k).reshape(n, k, d)
-            temp = C.reshape(-1)
-            ci = np.tile(temp, (n, 1)).reshape(n, k, d)
-            xc = xi-ci
-            dist = np.linalg.norm(xc, axis=2)
-            clss = np.argmin(dist, axis=1)
-            """
-            dist = np.sqrt(((X - C[:, np.newaxis])**2).sum(axis=-1))
-            clss = np.argmin(dist, axis=0)
-            for j in range(k):
-                """
-                data_indx = np.where(clss == j)
-                if len(data_indx[0]) == 0:
-                    C[j] = np.random.uniform(low, high, (1, d))
-                else:
-                    C[j] = np.mean(X[data_indx], axis=0)
-                """
-                if (len(X[clss == j]) == 0):
-                    C[j, :] = np.random.uniform(low, high, size=(1, d))
-                else:
-                    C[j, :] = (X[clss == j].mean(axis=0))
-            if (C == C_prev).all():
-                return C, clss
-            C_prev = np.copy(C)
-    except Exception:
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None
+    if type(k) != int or k <= 0 or X.shape[0] <= k:
+        return None, None
+    if type(iterations) != int or iterations <= 0:
+        return None, None
+
+    low = np.amin(X, axis=0)
+    high = np.amax(X, axis=0)
+    n, d = X.shape
+    C = np.random.uniform(low, high, (k, d))
+    C_prev = np.copy(C)
+    for i in range(iterations):
+        xi = np.tile(X, k).reshape(n, k, d)
+        temp = C.reshape(-1)
+        ci = np.tile(temp, (n, 1)).reshape(n, k, d)
+        xc = xi-ci
+        dist = np.linalg.norm(xc, axis=2)
+        clss = np.argmin(dist, axis=1)
+        for j in range(k):
+            data_indx = np.where(clss == j)
+            if len(data_indx[0]) == 0:
+                C[j] = np.random.uniform(low, high, (1, d))
+            else:
+                C[j] = np.mean(X[data_indx], axis=0)
+        if (C == C_prev).all():
+            return C, clss
+        C_prev = np.copy(C)
     return C, clss
