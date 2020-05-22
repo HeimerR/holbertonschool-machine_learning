@@ -27,7 +27,6 @@ def variance(X, C):
             return None
         if k >= X.shape[0]:
             return None
-        """
         xi = np.tile(X, k).reshape(n, k, d)
         temp = C.reshape(-1)
         ci = np.tile(temp, (n, 1)).reshape(n, k, d)
@@ -35,14 +34,8 @@ def variance(X, C):
         dist = np.linalg.norm(xc, axis=2)
         clss = np.min(dist, axis=1)
         variance = np.sum(clss**2)
-        """
-        """
 
         return np.sum(variance)
-        """
-        distances = np.sqrt(np.sum(pow((X - C[:, np.newaxis]), 2), -1))
-        min_distance = np.min(distances, axis=0)
-        var = pow(min_distance, 2).sum()
-        return var
+
     except Exception:
         return None
