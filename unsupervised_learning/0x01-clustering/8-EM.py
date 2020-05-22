@@ -35,34 +35,30 @@ def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
                 for each data point in each cluster
             - l is the log likelihood of the model
     """
-    try:
-        if not isinstance(X, np.ndarray) or len(X.shape) != 2:
-            return None, None, None, None, None
-        if type(k) != int or k <= 0 or X.shape[0] <= k:
-            return None, None, None, None, None
-        if type(iterations) != int or iterations <= 0:
-            return None, None, None, None, None
-        if type(tol) != float or tol < 0:
-            return None, None, None, None, None
-        if type(verbose) != bool:
-            return None, None, None, None, None
-
-        pi, m, S = initialize(X, k)
-        n, d = X.shape
-        l_prev = 0
-        for i in range(iterations):
-            g, li = expectation(X, pi, m, S)
-            pi, m, S = maximization(X, g)
-            if verbose is True and i % 10 == 0:
-                print("Log Likelihood after {} iterations: {}".format(i, li))
-
-            if abs(li - l_prev) <= tol:
-                if verbose is True:
-                    print("Log Likelihood after "
-                          "{} iterations: {}".format(i, li))
-                break
-            l_prev = li
-
-        return pi, m, S, g, li
-    except Exception:
+    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None, None, None, None
+    if type(k) != int or k <= 0 or X.shape[0] <= k:
+        return None, None, None, None, None
+    if type(iterations) != int or iterations <= 0:
+        return None, None, None, None, None
+    if type(tol) != float or tol <= 0:
+        return None, None, None, None, None
+    if type(verbose) != bool:
+        return None, None, None, None, None
+
+    pi, m, S = initialize(X, k)
+    n, d = X.shape
+    l_prev = 0
+    for i in range(iterations):
+        g, li = expectation(X, pi, m, S)
+        pi, m, S = maximization(X, g)
+        if verbose is True and i % 10 == 0:
+            print("Log Likelihood after {} iterations: {}".format(i, li))
+
+        if abs(li - l_prev) <= tol:
+            if verbose is True:
+                print("Log Likelihood after {} iterations: {}".format(i, li))
+            break
+        l_prev = li
+
+    return pi, m, S, g, li
