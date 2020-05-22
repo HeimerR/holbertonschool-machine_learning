@@ -37,11 +37,11 @@ def kmeans(X, k, iterations=1000):
     low = np.amin(X, axis=0)
     high = np.amax(X, axis=0)
     n, d = X.shape
-    C_prev = np.random.uniform(low, high, (k, d))
-    C = np.zeros_like(C_prev)
+    C = np.random.uniform(low, high, (k, d))
+    C_prev = np.copy(C)
     for i in range(iterations):
         xi = np.tile(X, k).reshape(n, k, d)
-        temp = C_prev.reshape(-1)
+        temp = C.reshape(-1)
         ci = np.tile(temp, (n, 1)).reshape(n, k, d)
         xc = xi-ci
         dist = np.linalg.norm(xc, axis=2)
