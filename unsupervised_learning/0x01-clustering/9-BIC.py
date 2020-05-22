@@ -65,8 +65,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
                                                        iterations,
                                                        tol,
                                                        verbose)
-            if pi is None:
-                return None, None, None, None
             pi_t.append(pi)
             m_t.append(m)
             S_t.append(S)
