@@ -1,57 +1,59 @@
 #!/usr/bin/env python3
-""" K-means """
+"""Perform k means on some data"""
+
+
 import numpy as np
 
 
 def kmeans(X, k, iterations=1000):
     """
-        performs K-means on a dataset:
-
-        - X is a numpy.ndarray of shape (n, d) containing the dataset
-            - n is the number of data points
-            - d is the number of dimensions for each data point
-        - k is a positive integer containing the number of clusters
-
-        iterations is a positive integer containing the maximum number
-            of iterations that should be performed
-        If no change occurs between iterations, your function should return
-        Initialize the cluster centroids using a multivariate uniform
-            distribution
-        If a cluster contains no data points during the update step,
-            reinitialize its centroid
-
-        Returns: C, clss, or None, None on failure
-        - C is a numpy.ndarray of shape (k, d) containing the centroid means
-            for each cluster
-        - clss is a numpy.ndarray of shape (n,) containing the index of the
-            cluster in C that each data point belongs to
+    Perform k means on some data
+    X: (n, d) ndarray n = data, d = dimensions
+    k: number of clusters
     """
-    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+    centroids = initialize(X, k)
+    if centroids is None:
         return None, None
-    if type(k) != int or k <= 0 or X.shape[0] <= k:
+    if not isinstance(iterations, int) or iterations < 1:
         return None, None
-    if type(iterations) != int or iterations <= 0:
-        return None, None
+    assignments = np.zeros(X.shape[0], dtype=int)
+    while iterations > 0:
+        prevassign = assignments.copy()
+        update_assignments(centroids, X, assignments)
+        for cidx in range(len(centroids)):
+            assigned = np.where(assignments == cidx, True, False)
+            if assigned.sum() == 0:
+                centroids[cidx] = np.random.uniform(np.amin(X, axis=0),
+                                                    np.amax(X, axis=0),
+                                                    (1, X.shape[1]))
+                continue
+            centroids[cidx] = X[assigned, :].sum(axis=0) / assigned.sum()
+        if (assignments == prevassign).all():
+            break
+        iterations -= 1
+    update_assignments(centroids, X, assignments)
+    return centroids, assignments
 
-    low = np.amin(X, axis=0)
-    high = np.amax(X, axis=0)
-    n, d = X.shape
-    C = np.random.uniform(low, high, (k, d))
-    C_prev = np.copy(C)
-    for i in range(iterations):
-        xi = np.tile(X, k).reshape(n, k, d)
-        temp = C.reshape(-1)
-        ci = np.tile(temp, (n, 1)).reshape(n, k, d)
-        xc = xi-ci
-        dist = np.linalg.norm(xc, axis=2)
-        clss = np.argmin(dist, axis=1)
-        for j in range(k):
-            data_indx = np.where(clss == j)
-            if len(data_indx[0]) == 0:
-                C[j] = np.random.uniform(low, high, (1, d))
-            else:
-                C[j] = np.mean(X[data_indx], axis=0)
-        if (C == C_prev).all():
-            return C, clss
-        C_prev = np.copy(C)
-    return C, clss
+
+def update_assignments(centroids, X, assignments):
+    """
+    Update point assignments to centroids
+    """
+    for cidx, centroid in enumerate(centroids):
+        for pidx, point in enumerate(X):
+            assigned = assignments[pidx]
+            if assigned == cidx:
+                continue
+            assigned = pow(point - centroids[assigned], 2).sum()
+            checking = pow(point - centroid, 2).sum()
+            if checking < assigned:
+                assignments[pidx] = cidx
+
+
+def initialize(X, k):
+    """Initialize k clusters with mutivariate uniform distribution"""
+    if ((not isinstance(X, np.ndarray) or len(X.shape) != 2 or
+         not isinstance(k, int) or k < 1 or k > X.shape[0] or X.shape[1] < 1)):
+        return None
+    return np.random.uniform(np.amin(X, axis=0), np.amax(X, axis=0),
+                             (k, X.shape[1]))
