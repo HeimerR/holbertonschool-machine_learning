@@ -38,19 +38,25 @@ def kmeans(X, k, iterations=1000):
     n, d = X.shape
     C = np.random.uniform(low, high, (k, d))
     C_prev = np.copy(C)
+    xi = np.tile(X, k).reshape(n, k, d)
+    temp = C.reshape(-1)
+    ci = np.tile(temp, (n, 1)).reshape(n, k, d)
+    xc = xi-ci
+    dist = np.linalg.norm(xc, axis=2)
+    clss = np.argmin(dist, axis=1)
     for i in range(iterations):
-        xi = np.tile(X, k).reshape(n, k, d)
-        temp = C.reshape(-1)
-        ci = np.tile(temp, (n, 1)).reshape(n, k, d)
-        xc = xi-ci
-        dist = np.linalg.norm(xc, axis=2)
-        clss = np.argmin(dist, axis=1)
         for j in range(k):
             data_indx = np.where(clss == j)
             if len(data_indx[0]) == 0:
                 C[j] = np.random.uniform(low, high, (1, d))
             else:
                 C[j] = np.mean(X[data_indx], axis=0)
+        xi = np.tile(X, k).reshape(n, k, d)
+        temp = C.reshape(-1)
+        ci = np.tile(temp, (n, 1)).reshape(n, k, d)
+        xc = xi-ci
+        dist = np.linalg.norm(xc, axis=2)
+        clss = np.argmin(dist, axis=1)
         if (C == C_prev).all():
             return C, clss
         C_prev = np.copy(C)
