@@ -25,7 +25,7 @@ def variance(X, C):
 
         if d != C.shape[1]:
             return None
-        if k >= X.shape[0]:
+        if k > X.shape[0]:
             return None
         xi = np.tile(X, k).reshape(n, k, d)
         temp = C.reshape(-1)
