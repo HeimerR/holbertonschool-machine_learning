@@ -35,7 +35,7 @@ def variance(X, C):
         clss = np.min(dist, axis=1)
         variance = np.sum(clss**2)
 
-        return np.sum(variance) + 1e-12
+        return np.sum(variance)
 
     except Exception:
         return None
