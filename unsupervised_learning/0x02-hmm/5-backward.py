@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-""" The Forward Algorithm """
+""" The Backward Algorithm """
 import numpy as np
 
 
-def forward(Observation, Emission, Transition, Initial):
-    """  performs the forward algorithm for a hidden markov model:
+def backward(Observation, Emission, Transition, Initial):
+    """  performs the backward algorithm for a hidden markov model:
 
         - Observation is a numpy.ndarray of shape (T,) that contains
             the index of the observation
@@ -24,12 +24,12 @@ def forward(Observation, Emission, Transition, Initial):
         - Initial a numpy.ndarray of shape (N, 1) containing the
             probability of starting in a particular hidden state
 
-    Returns: P, F, or None, None on failure
+    Returns: P, B, or None, None on failure
         - P is the likelihood of the observations given the model
-        - F is a numpy.ndarray of shape (N, T) containing the forward
+        - B is a numpy.ndarray of shape (N, T) containing the backward
             path probabilities
-            - F[i, j] is the probability of being in hidden state
-            i at time j given the previous observations
+            - B[i, j] is the probability of being in hidden state
+            i at time j
     """
     if not isinstance(Observation, np.ndarray) or len(Observation.shape) != 1:
         return None, None
@@ -52,11 +52,13 @@ def forward(Observation, Emission, Transition, Initial):
     if not np.sum(Initial) == 1:
         return None, None
 
-    alpha = np.zeros((N, T))
-    alpha[:, 0] = Initial.T * Emission[:, Observation[0]]
+    beta = np.zeros((N, T))
 
-    for t in range(1, T):
+    beta[:, T - 1] = np.ones((N))
+
+    for t in range(T - 2, -1, -1):
         for j in range(N):
-            alpha[j, t] = (alpha[:, t - 1].dot(Transition[:, j]) *
-                           Emission[j, Observation[t]])
-    return 1, alpha
+            beta[j, t] = ((beta[:, t + 1] * Emission[:, Observation[t + 1]])
+                          .dot(Transition[j, :]))
+    P = np.sum(beta[:, 1], axis=0)
+    return P, beta.T
