@@ -60,11 +60,12 @@ class BayesianOptimization:
 
 
         if self.minimize is True:
-            f_plus = np.amax(self.gp.Y)
+            f_plus = np.amin(self.gp.Y)
+            imp = mu - f_plus - self.xsi
         else:
-            f_plus = np.amax(mu)
+            f_plus = np.amax(self.gp.Y)
+            imp = f_plus + mu - self.xsi
 
-        imp = mu - self.xsi
         Z = np.empty_like(sigma)
         for i in range(len(sigma)):
             if sigma[i] > 0:
@@ -78,4 +79,4 @@ class BayesianOptimization:
             else:
                 ei[i] = 0
 
-        return self.X_s[np.argmax(ei)], ei
+        return self.X_s[np.argmax(ei, 0)], ei
