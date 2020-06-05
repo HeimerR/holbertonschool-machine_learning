@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """ Initialize Bayesian Optimization """
 import numpy as np
-GP = __import__('2-gp').GaussianProcess
 from scipy.stats import norm
-from scipy.optimize import minimize
+GP = __import__('2-gp').GaussianProcess
 
 
 class BayesianOptimization:
@@ -45,7 +44,6 @@ class BayesianOptimization:
         self.xsi = xsi
         self.minimize = minimize
 
-
     def acquisition(self):
         """ calculates the next best sample location:
 
@@ -58,13 +56,12 @@ class BayesianOptimization:
         """
         mu, sigma = self.gp.predict(self.X_s)
 
-
         if self.minimize is True:
             f_plus = np.amin(self.gp.Y)
-            imp = mu - f_plus - self.xsi
+            imp = f_plus - mu - self.xsi
         else:
             f_plus = np.amax(self.gp.Y)
-            imp = f_plus + mu - self.xsi
+            imp = mu - f_plus - self.xsi
 
         Z = np.empty_like(sigma)
         for i in range(len(sigma)):
