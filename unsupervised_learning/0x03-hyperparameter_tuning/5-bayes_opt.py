@@ -58,10 +58,10 @@ class BayesianOptimization:
 
         if self.minimize is True:
             f_plus = np.amin(self.gp.Y)
-            imp = mu - f_plus - self.xsi
+            imp = f_plus - mu - self.xsi
         else:
             f_plus = np.amax(self.gp.Y)
-            imp = f_plus + mu - self.xsi
+            imp = mu - f_plus - self.xsi
 
         Z = np.empty_like(sigma)
         for i in range(len(sigma)):
@@ -94,7 +94,6 @@ class BayesianOptimization:
         used = []
         for i in range(iterations):
             x_next, _ = self.acquisition()
-            print(x_next)
             if x_next in used:
                 break
             y_next = self.f(x_next)
