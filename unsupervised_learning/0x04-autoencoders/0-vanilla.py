@@ -31,7 +31,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     out_encoder = K.layers.Dense(latent_dims, activation='relu')(output)
 
     input_decoder = K.Input(shape=(latent_dims, ))
-    output2 = K.layers.Dense(hidden_layers[-1], activation='relu')(input_decoder)
+    output2 = K.layers.Dense(hidden_layers[-1],
+                             activation='relu')(input_decoder)
     for i in range(len(hidden_layers)-2, -1, -1):
         output2 = K.layers.Dense(hidden_layers[i], activation='relu')(output2)
     out_decoder = K.layers.Dense(input_dims, activation='sigmoid')(output2)
@@ -44,6 +45,6 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     decoderOut = decoder(encoderOut)
     auto = K.models.Model(inputs=input_auto, outputs=decoderOut)
     auto.compile(optimizer='Adam',
-                    loss='binary_crossentropy')
+                 loss='binary_crossentropy')
 
     return encoder, decoder, auto
