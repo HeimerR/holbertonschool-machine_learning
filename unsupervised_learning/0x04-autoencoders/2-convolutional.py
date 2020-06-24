@@ -20,7 +20,8 @@ def autoencoder(input_dims, filters, latent_dims):
         a filter size of (3, 3) with same padding and relu activation, followed
         by upsampling of size (2, 2)
         The second to last convolution should instead use valid padding
-        The last convolution should have only 1 filter with sigmoid activation
+        The last convolution should have the same number of filters as the
+        number of channels in input_dims with sigmoid activation
         and no upsampling
 
         Returns: encoder, decoder, auto
@@ -36,16 +37,16 @@ def autoencoder(input_dims, filters, latent_dims):
                              kernel_size=3,
                              padding='same',
                              activation='relu')(input_encoder)
-    output = K.layers.MaxPool2D(pool_size=(2, 2))(output)
+    output = K.layers.MaxPool2D(pool_size=(2, 2), padding='same')(output)
 
     for i in range(1, len(filters)):
         output = K.layers.Conv2D(filters=filters[i],
                                  kernel_size=3,
                                  padding='same',
                                  activation='relu')(output)
-        output = K.layers.MaxPool2D(pool_size=(2, 2))(output)
+        output = K.layers.MaxPool2D(pool_size=(2, 2), padding='same')(output)
 
-    out_encoder = K.layers.Reshape(latent_dims)(output)
+    out_encoder = output
 
     input_decoder = K.Input(shape=latent_dims)
 
@@ -55,21 +56,20 @@ def autoencoder(input_dims, filters, latent_dims):
                               activation='relu')(input_decoder)
     output2 = K.layers.UpSampling2D(2)(output2)
 
-    for i in range(len(filters)-2, 2, -1):
-        print(i)
+    for i in range(len(filters)-2, 0, -1):
         output2 = K.layers.Conv2D(filters=filters[i],
                                   kernel_size=3,
                                   padding='same',
                                   activation='relu')(output2)
         output2 = K.layers.UpSampling2D(2)(output2)
 
-    output2 = K.layers.Conv2D(filters=filters[1],
+    output2 = K.layers.Conv2D(filters=filters[0],
                               kernel_size=3,
-                              padding='same',
+                              padding='valid',
                               activation='relu')(output2)
     output2 = K.layers.UpSampling2D(2)(output2)
 
-    out_decoder = K.layers.Conv2D(filters=1,
+    out_decoder = K.layers.Conv2D(filters=input_dims[-1],
                                   kernel_size=3,
                                   padding='same',
                                   activation='sigmoid')(output2)
