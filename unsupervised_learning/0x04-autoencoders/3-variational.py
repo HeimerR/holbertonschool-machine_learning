@@ -12,6 +12,7 @@ def sampling(args):
     epsilon = K.backend.random_normal(shape=(m, dims))
     return z_mean + K.backend.exp(0.5 * z_var) * epsilon
 
+
 def autoencoder(input_dims, hidden_layers, latent_dims):
     """ Creates a variational autoencoder:
 
@@ -29,9 +30,9 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
             - auto is the full autoencoder model
         The autoencoder model should be compiled using adam optimization
         and binary cross-entropy loss
-   	All layers should use a relu activation except for the mean and
-	log variance layers in the encoder, which should use None, and the
-	last layer in the decoder, which should use sigmoid
+        All layers should use a relu activation except for the mean and
+        log variance layers in the encoder, which should use None, and the
+        last layer in the decoder, which should use sigmoid
     """
     input_encoder = K.Input(shape=(input_dims, ))
 
@@ -53,22 +54,21 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     encoder = K.models.Model(inputs=input_encoder, outputs=[z, z_mean, z_var])
     decoder = K.models.Model(inputs=input_decoder, outputs=out_decoder)
 
-    input_auto = K.Input(shape=(input_dims, ))
-    encoderOut = encoder(input_auto)[0]
+    encoderOut = encoder(input_encoder)[0]
     decoderOut = decoder(encoderOut)
-    auto = K.models.Model(inputs=input_auto, outputs=decoderOut)
+    auto = K.models.Model(inputs=input_encoder, outputs=decoderOut)
 
     encoder.summary()
     decoder.summary()
     auto.summary()
-    def loss(input_auto, decoderOut):
+
+    def loss(y_in, y_out):
         """ custom loss function """
-        reconstruction_loss = K.backend.binary_crossentropy(input_auto, decoderOut)
-        reconstruction_loss = K.backend.sum(reconstruction_loss, axis=-1)
-        print(reconstruction_loss.shape)
-        kl_loss = - 0.5 * K.backend.sum(1 + z_var - K.backend.square(z_mean) - K.backend.exp(z_var), axis=-1)
-        print(kl_loss.shape)
-        return kl_loss + reconstruction_loss
+        reconstruction_loss = K.backend.binary_crossentropy(y_in, y_out)
+        reconstruction_loss = K.backend.sum(reconstruction_loss, axis=1)
+        kl_loss = (1 + z_var - K.backend.square(z_mean) - K.backend.exp(z_var))
+        kl_loss = -0.5 * K.backend.sum(kl_loss, axis=1)
+        return reconstruction_loss + kl_loss
 
     auto.compile(optimizer='Adam', loss=loss)
 
