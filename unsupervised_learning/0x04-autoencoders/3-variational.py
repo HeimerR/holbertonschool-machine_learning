@@ -10,7 +10,7 @@ def sampling(args):
     m = K.backend.shape(z_mean)[0]
     dims = K.backend.int_shape(z_mean)[1]
     epsilon = K.backend.random_normal(shape=(m, dims))
-    return z_mean + K.backend.exp(z_var) * epsilon
+    return z_mean + K.backend.exp(0.5 * z_var) * epsilon
 
 def autoencoder(input_dims, hidden_layers, latent_dims):
     """ Creates a variational autoencoder:
@@ -50,11 +50,11 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         output2 = K.layers.Dense(hidden_layers[i], activation='relu')(output2)
     out_decoder = K.layers.Dense(input_dims, activation='sigmoid')(output2)
 
-    encoder = K.models.Model(inputs=input_encoder, outputs=[z_mean, z_var, z])
+    encoder = K.models.Model(inputs=input_encoder, outputs=[z, z_mean, z_var])
     decoder = K.models.Model(inputs=input_decoder, outputs=out_decoder)
 
     input_auto = K.Input(shape=(input_dims, ))
-    encoderOut = encoder(input_auto)[2]
+    encoderOut = encoder(input_auto)[0]
     decoderOut = decoder(encoderOut)
     auto = K.models.Model(inputs=input_auto, outputs=decoderOut)
 
@@ -63,12 +63,12 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     auto.summary()
     def loss(input_auto, decoderOut):
         """ custom loss function """
-        reconstruction_loss = K.losses.binary_crossentropy(input_auto, decoderOut)
-        reconstruction_loss *= input_dims
-        kl_loss = 1 + z_var - K.backend.square(z_mean) - K.backend.exp(z_var)
-        kl_loss = K.backend.sum(kl_loss, axis=-1)
-        kl_loss *= -0.5
-        return K.backend.mean(reconstruction_loss + kl_loss)
+        reconstruction_loss = K.backend.binary_crossentropy(input_auto, decoderOut)
+        reconstruction_loss = K.backend.sum(reconstruction_loss, axis=-1)
+        print(reconstruction_loss.shape)
+        kl_loss = - 0.5 * K.backend.sum(1 + z_var - K.backend.square(z_mean) - K.backend.exp(z_var), axis=-1)
+        print(kl_loss.shape)
+        return kl_loss + reconstruction_loss
 
     auto.compile(optimizer='Adam', loss=loss)
 
