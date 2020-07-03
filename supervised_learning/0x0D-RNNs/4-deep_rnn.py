@@ -27,18 +27,18 @@ def deep_rnn(rnn_cells, X, h_0):
     _, _, h = h_0.shape
     H = np.zeros((times+1, layers, m, h))
     H[0] = h_0
-    for t in range(1, times+1):
+    for t in range(times):
         for n_layer in range(layers):
             if n_layer == 0:
-                h_prev, y = rnn_cells[n_layer].forward(H[t-1, n_layer], X[t-1])
+                h_prev, y = rnn_cells[n_layer].forward(H[t, n_layer], X[t])
             else:
-                h_prev, y = rnn_cells[n_layer].forward(H[t-1, n_layer], h_prev)
-            H[t, n_layer, ...] = h_prev
+                h_prev, y = rnn_cells[n_layer].forward(H[t, n_layer], h_prev)
+            H[t+1, n_layer, ...] = h_prev
             if n_layer == layers-1:
-                if t == 1:
+                if t == 0:
                     Y = y
                 else:
                     Y = np.concatenate((Y, y))
 
     o = Y.shape[-1]
-    return H, Y.reshape(t, m, o)
+    return H, Y.reshape(times, m, o)
