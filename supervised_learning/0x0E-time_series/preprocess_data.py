@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """ Time Series Forecasting - preprocess"""
 import tensorflow as tf
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
