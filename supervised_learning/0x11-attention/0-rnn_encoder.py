@@ -3,7 +3,7 @@
 import tensorflow as tf
 
 
-class RNNEncoder:
+class RNNEncoder(tf.keras.layers.Layer):
     """ inherits from tensorflow.keras.layers.Layer to encode
         for machine translation:
     """
@@ -28,13 +28,13 @@ class RNNEncoder:
                     Recurrent weights should be initialized with
                     glorot_uniform
         """
-
+        super(RNNEncoder, self).__init__()
         self.batch = batch
         self.units = units
-        embedding = tf.keras.layers.Embedding(vocab, embedding)
-        gru = tf.keras.layers.GRU(units,
-                                  recurrent_regularizer='glorot_uniform',
-                                  return_sequences=True, return_state=True)
+        self.embedding = tf.keras.layers.Embedding(vocab, embedding)
+        self.gru = tf.keras.layers.GRU(units,
+                                       recurrent_initializer='glorot_uniform',
+                                       return_sequences=True, return_state=True)
 
 
     def initialize_hidden_state(self):
@@ -43,6 +43,9 @@ class RNNEncoder:
 
             Returns: a tensor of shape (batch, units)containing the initialized hidden states
         """
+        initializer = tf.keras.initializers.Zeros()
+        values = initializer(shape=(self.batch, self.units))
+        return values
 
     def call(self, x, initial):
         """
@@ -58,3 +61,7 @@ class RNNEncoder:
                 hidden state of the encoder
         """
 
+        x = self.embedding(x)
+        outputs, hidden = self.gru(x, initial_state = initial)
+
+        return outputs, hidden

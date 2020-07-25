@@ -15,4 +15,4 @@ print(initial)
 x = tf.convert_to_tensor(np.random.choice(1024, 32).reshape((32, 1)))
 outputs, hidden = encoder(x, initial)
 print(outputs)
-print(hidden
+print(hidden)
