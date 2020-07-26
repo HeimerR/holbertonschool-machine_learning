@@ -26,7 +26,8 @@ def sdp_attention(Q, K, V, mask=None):
         weights a tensor with its last two dimensions as
         (..., seq_len_q, seq_len_v) containing the attention weights
     """
-    matmul_qk = tf.matmul(Q, K, transpose_b=True)  # (..., seq_len_q, seq_len_k)
+    # (..., seq_len_q, seq_len_k)
+    matmul_qk = tf.matmul(Q, K, transpose_b=True)
 
     # scale matmul_qk
     dk = tf.cast(tf.shape(K)[-1], tf.float32)
@@ -38,7 +39,8 @@ def sdp_attention(Q, K, V, mask=None):
 
     # softmax is normalized on the last axis (seq_len_k) so that the scores
     # add up to 1.
-    attention_weights = tf.nn.softmax(scaled_attention_logits, axis=-1)  # (..., seq_len_q, seq_len_k)
+    # (..., seq_len_q, seq_len_k)
+    attention_weights = tf.nn.softmax(scaled_attention_logits, axis=-1)
 
     output = tf.matmul(attention_weights, V)  # (..., seq_len_q, depth_v)
 

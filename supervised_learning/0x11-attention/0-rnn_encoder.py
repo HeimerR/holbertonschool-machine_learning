@@ -34,14 +34,16 @@ class RNNEncoder(tf.keras.layers.Layer):
         self.embedding = tf.keras.layers.Embedding(vocab, embedding)
         self.gru = tf.keras.layers.GRU(units,
                                        recurrent_initializer='glorot_uniform',
-                                       return_sequences=True, return_state=True)
-
+                                       return_sequences=True,
+                                       return_state=True)
 
     def initialize_hidden_state(self):
         """
-            Initializes the hidden states for the RNN cell to a tensor of zeros
+            Initializes the hidden states for the RNN cell to a tensor
+                of zeros
 
-            Returns: a tensor of shape (batch, units)containing the initialized hidden states
+            Returns: a tensor of shape (batch, units)containing the
+                initialized hidden states
         """
         initializer = tf.keras.initializers.Zeros()
         values = initializer(shape=(self.batch, self.units))
@@ -62,6 +64,6 @@ class RNNEncoder(tf.keras.layers.Layer):
         """
 
         x = self.embedding(x)
-        outputs, hidden = self.gru(x, initial_state = initial)
+        outputs, hidden = self.gru(x, initial_state=initial)
 
         return outputs, hidden

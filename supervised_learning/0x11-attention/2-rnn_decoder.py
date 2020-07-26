@@ -29,7 +29,8 @@ class RNNDecoder(tf.keras.layers.Layer):
         self.embedding = tf.keras.layers.Embedding(vocab, embedding)
         self.gru = tf.keras.layers.GRU(units,
                                        recurrent_initializer='glorot_uniform',
-                                       return_sequences=True, return_state=True)
+                                       return_sequences=True,
+                                       return_state=True)
 
         self.F = tf.keras.layers.Dense(vocab)
 
@@ -37,8 +38,8 @@ class RNNDecoder(tf.keras.layers.Layer):
         """
             - x is a tensor of shape (batch, 1) containing the previous word
                 in the target sequence as an index of the target vocabulary
-            - s_prev is a tensor of shape (batch, units) containing the previous
-                decoder hidden state
+            - s_prev is a tensor of shape (batch, units) containing the
+                previous decoder hidden state
             - hidden_states is a tensor of shape (batch, input_seq_len, units)
                 containing the outputs of the encoder
 
@@ -49,22 +50,16 @@ class RNNDecoder(tf.keras.layers.Layer):
                 hidden state
         """
         attention = SelfAttention(s_prev.shape[1])
-        # enc_output shape == (batch_size, max_length, hidden_size)
         context, weights = attention(s_prev, hidden_states)
 
-	# x shape after passing through embedding == (batch_size, 1, embedding_dim)
         x = self.embedding(x)
 
-	# x shape after concatenation == (batch_size, 1, embedding_dim + hidden_size)
         x = tf.concat([tf.expand_dims(context, 1), x], axis=-1)
 
-	# passing the concatenated vector to the GRU
         output, state = self.gru(x)
 
-	# output shape == (batch_size * 1, hidden_size)
         output = tf.reshape(output, (-1, output.shape[2]))
 
-	# output shape == (batch_size, vocab)
         x = self.F(output)
 
         return x, state
