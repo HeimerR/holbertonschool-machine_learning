@@ -3,23 +3,6 @@
 from scipy import math, special
 
 
-def intersection(x, n, P, Pr):
-    """ calculates the intersection of obtaining this data with the various
-        hypothetical probabilities
-    """
-    factorial = special.factorial
-    likelihood = ((factorial(n) / (factorial(x) * factorial(n - x)))
-                  * (P ** x) * ((1 - P) ** (n - x)))
-    return likelihood * Pr
-
-
-def marginal(x, n, P, Pr):
-    """
-        calculates the marginal probability of obtaining the data
-    """
-    return intersection(x, n, P, Pr)
-
-
 def posterior(x, n, p1, p2):
     """
         calculates the posterior probability that the probability of
@@ -60,7 +43,9 @@ def posterior(x, n, p1, p2):
         raise ValueError("p2 must be a float in the range [0, 1]")
     if p2 <= p1:
         raise ValueError("p2 must be greater than p1")
-    Pr = p2-p1
-    P = (p2-p1)/2
-    post = intersection(x, n, P, Pr) / marginal(x, n, P, Pr)
-    return 0.6098093274896035
+    y = n - x
+    f = math.factorial(n+1)/(math.factorial(x)*math.factorial(y))
+    h_1 = special.hyp2f1(x+1, x-n, x+2, p1)
+    h_2 = special.hyp2f1(x+1, x-n, x+2, p2)
+    posterior = f*(((p2**(x+1))*h2)-((p1**(x+1))*h1))/(x+1)
+    return posterior
