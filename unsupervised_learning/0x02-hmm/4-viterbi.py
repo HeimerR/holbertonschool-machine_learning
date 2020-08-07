@@ -58,15 +58,20 @@ def viterbi(Observation, Emission, Transition, Initial):
     Backpointer[:, 0] = 0
 
     for i in range(1, T):
-        Viterbi[:, i] = np.max(Viterbi[:, i - 1] * Transition.T *
-                               Emission[np.newaxis, :, Observation[i]].T, 1)
-        Backpointer[:, i] = np.argmax(Viterbi[:, i - 1] * Transition.T, 1)
+        prob = (Viterbi[:, i - 1] * Transition.T *
+                Emission[np.newaxis, :, Observation[i]].T)
+        Viterbi[:, i] = np.amax(prob, 1)
+        Backpointer[:, i-1] = np.argmax(prob, 1)
 
     x = [0 for i in range(T)]
-    x[-1] = np.argmax(Viterbi[:, 0])
-    for i in reversed(range(1, T)):
-        m = Backpointer[x[i], i]
-        x[i - 1] = int(m)
+    last_state = np.argmax(Viterbi[:, T - 1])
+    x[0] = last_state
+    index = 1
+    for i in range(T - 2, -1, -1):
+        x[index] = int(Backpointer[int(last_state), i])
+        last_state = Backpointer[int(last_state), i]
+        index += 1
+    x.reverse()
     P = np.amax(Viterbi, axis=0)
     P = np.amin(P)
     return x, P
