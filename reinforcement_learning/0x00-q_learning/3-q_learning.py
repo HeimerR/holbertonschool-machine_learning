@@ -28,6 +28,7 @@ def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
             total_rewards is a list containing the rewards per episode
     """
     rewards_all_episodes = []
+    max_epsilon = epsilon
     # Q-learning algorithm
     for episode in range(episodes):
         # initialize new episode params
@@ -40,16 +41,18 @@ def train(env, Q, episodes=5000, max_steps=100, alpha=0.1, gamma=0.99,
             # Take new action
             new_state, reward, done, info = env.step(action)
             # Update Q-table
+            if done and reward == 0:
+                reward = -1
             Q[state, action] = Q[state, action] * (1 - alpha) + \
                     alpha * (reward + gamma * np.max(Q[new_state, :]))
             # Set new state
             state = new_state
             rewards_current_episode += reward
             # Add new reward
-
+            if done:
+                break
         # Exploration rate decay
-        exploration_rate = min_epsilon + \
-                    (1 - min_epsilon) * np.exp(-epsilon_decay*episode)
+        epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-epsilon_decay*episode)
         # Add current episode reward to total rewards list
         rewards_all_episodes.append(rewards_current_episode)
     return Q, rewards_all_episodes
