@@ -1,10 +1,7 @@
 #!/usr/bin/env python3
 """ Epsilon Greedy """
 import numpy as np
-import gym
-import random
-import time
-from gym.envs.toy_text import frozen_lake
+
 
 def epsilon_greedy(Q, state, epsilon):
     """ uses epsilon-greedy to determine the next action:
@@ -22,8 +19,7 @@ def epsilon_greedy(Q, state, epsilon):
     """
     p = np.random.uniform(0, 1)
     if p > epsilon:
-        action = np.argmax(Q[state,:])
+        action = np.argmax(Q[state, :])
     else:
         action = np.random.randint(Q.shape[1])
     return action
-

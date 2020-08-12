@@ -12,5 +12,4 @@ env = load_frozen_lake(desc=desc)
 Q = q_init(env)
 
 Q, total_rewards  = train(env, Q)
-print(Q)
 print(play(env, Q))
