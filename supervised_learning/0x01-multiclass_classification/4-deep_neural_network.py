@@ -68,24 +68,23 @@ class DeepNeuralNetwork():
         return self.__activation
 
     def forward_prop(self, X):
-        """ Activation function
-            Sigmoid Forward propagation
-        """
-        self.__cache['A0'] = X
-        for i in range(self.L):
-            w = 'W' + str(i + 1)
-            b = 'b' + str(i + 1)
-            a = 'A' + str(i + 1)
-            Z = np.dot(self.__weights[w], self.__cache['A' + str(i)])\
-                + self.__weights[b]
-            if i + 1 == self.L:
-                exp = np.exp(Z)
-                self.__cache[a] = exp / np.sum(exp, axis=0, keepdims=True)
-            elif self.__activation == 'sig':
-                self.__cache[a] = 1 / (1 + np.exp(-Z))
-            elif self.__activation == 'tanh':
-                self.__cache[a] = np.tanh(Z)
-        return self.__cache[a], self.__cache
+        """ Calculates the forward propagation of the neural network """
+        self.__cache["A0"] = X
+        for ly in range(self.__L):
+            Zp = np.matmul(self.__weights["W"+str(ly+1)],
+                           self.__cache["A"+str(ly)])
+            Z = Zp + self.__weights["b"+str(ly+1)]
+            if ly == self.__L - 1:
+                t = np.exp(Z)
+                self.__cache["A"+str(ly+1)] = (t/np.sum(t, axis=0,
+                                               keepdims=True))
+            else:
+                if self.__activation == 'sig':
+                    self.__cache["A"+str(ly+1)] = 1/(1+np.exp(-Z))
+                else:
+                    self.__cache["A"+str(ly+1)] = np.tanh(Z)
+
+        return self.__cache["A"+str(self.__L)], self.__cache
 
     def cost(self, Y, A):
         """ Calculates the cost of the model using logistic regression
