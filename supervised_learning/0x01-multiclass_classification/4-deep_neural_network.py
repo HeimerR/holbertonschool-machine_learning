@@ -130,46 +130,41 @@ class DeepNeuralNetwork():
             self.__weights[w] = self.__weights[w] - (alpha * dw)
             self.__weights[b] = self.__weights[b] - (alpha * db)
 
-    def train(self, X, Y, iterations=5000, alpha=0.05,
-              verbose=True, graph=True, step=100):
-        """ Trains the deep neural network
-            @X: Input data
-            @Y: Correct labels for the input data
-            @iterations: Number of iterations to train over
-            @alpha: Learning rate
-        """
-        if type(iterations) is not int:
+    def train(self, X, Y, iterations=5000, alpha=0.05, verbose=True,
+              graph=True, step=100):
+        """ Trains the deep neural network """
+        if type(iterations) != int:
             raise TypeError("iterations must be an integer")
-        if iterations < 1:
+        if iterations <= 0:
             raise ValueError("iterations must be a positive integer")
-        if type(alpha) is not float:
+        if type(alpha) != float:
             raise TypeError("alpha must be a float")
         if alpha <= 0:
             raise ValueError("alpha must be positive")
-        if type(step) is not int:
-            raise TypeError("step must be an integer")
         if verbose is True or graph is True:
-            if step > iterations:
+            if type(step) != int:
+                raise TypeError("step must be an integer")
+            if step <= 0 or step > iterations:
                 raise ValueError("step must be positive and <= iterations")
-        it_x = []
-        cost_y = []
+
+        steps = []
+        costs = []
         for i in range(iterations + 1):
             self.forward_prop(X)
-            if (i % step) == 0:
-                a = 'A' + str(self.__L)
-                cost = self.cost(Y, self.__cache[a])
+            cost = self.cost(Y, self.__cache["A"+str(self.__L)])
+            if i % step == 0 or i == iterations:
+                costs.append(cost)
+                steps.append(i)
                 if verbose is True:
                     print("Cost after {} iterations: {}".format(i, cost))
-                if graph is True:
-                    it_x.append(i)
-                    cost_y.append(cost)
             if i < iterations:
                 self.gradient_descent(Y, self.__cache, alpha)
         if graph is True:
-            plt.plot(it_x, cost_y)
-            plt.title("Training Cost")
-            plt.xlabel("iterations")
-            plt.ylabel("cost")
+            plt.plot(np.array(steps), np.array(costs))
+            plt.xlabel('iteration')
+            plt.ylabel('cost')
+            plt.suptitle("Training Cost")
+            plt.show()
         return self.evaluate(X, Y)
 
     def save(self, filename):
