@@ -95,13 +95,11 @@ class DeepNeuralNetwork():
         return cost
 
     def evaluate(self, X, Y):
-        """ Evaluates the neuron
-            @Y: one-hot numpy.ndarray of shape (classes, m)
-        """
+        """ Evaluates the neural network’s predictions """
         self.forward_prop(X)
-        i = 'A' + str(self.__L)
-        A = self.__cache[i]
-        return np.round(A).astype(int), self.cost(Y, A)
+        tmp = np.amax(self.__cache["A"+str(self.__L)], axis=0)
+        return (np.where(self.__cache["A"+str(self.__L)] == tmp, 1, 0),
+                self.cost(Y, self.__cache["A"+str(self.__L)]))
 
     def gradient_descent(self, Y, cache, alpha=0.05):
         """ Calculates one pass of gradient descent on the neural network """
