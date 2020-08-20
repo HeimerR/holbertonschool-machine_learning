@@ -19,11 +19,11 @@ def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
             decay_step, decay_rate, staircase=True))
 
 
-def create_layer(prev, n, activations):
+def create_layer(prev, n, activation):
     """ creates a new layer withput nomalization """
     initializer = (tf.contrib.layers.
                    variance_scaling_initializer(mode="FAN_AVG"))
-    layer = tf.layers.Dense(n, activation=activations,
+    layer = tf.layers.Dense(n, activation=activation,
                             kernel_initializer=initializer,
                             name="layer")
     return layer(prev)
@@ -39,9 +39,9 @@ def create_batch_norm_layer(prev, n, activation):
     m, s = tf.nn.moments(x(prev), axes=[0])
 
     beta = tf.Variable(tf.constant(0.0, shape=[n]),
-                       name='beta', trainable=True)
+                       name='beta')
     gamma = tf.Variable(tf.constant(1.0, shape=[n]),
-                        name='gamma', trainable=True)
+                        name='gamma')
 
     f = (tf.nn.batch_normalization(x(prev), mean=m, variance=s,
          offset=beta, scale=gamma, variance_epsilon=1e-8))
@@ -107,7 +107,7 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001,
     accuracy = calculate_accuracy(y, y_pred)
     tf.add_to_collection('accuracy', accuracy)
 
-    global_step = tf.Variable(0, trainable=False)
+    global_step = tf.Variable(0)
     alpha = learning_rate_decay(alpha, decay_rate, global_step, 1)
     train_op = create_Adam_op(loss, alpha, beta1, beta2, epsilon)
     tf.add_to_collection('train_op', train_op)
