@@ -19,6 +19,14 @@ def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
             decay_step, decay_rate, staircase=True))
 
 
+def create_layer(prev, n, activations):
+    """ creates a new layer withput nomalization """
+    init = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
+    layer = tf.layers.Dense(n, activation=activation, kernel_initializer=init,
+                            name="layer")
+    return layer
+
+
 def create_batch_norm_layer(prev, n, activation):
     """  creates a batch normalization layer for a neural network
     in tensorflow
@@ -53,7 +61,10 @@ def forward_prop(x, layer_sizes=[], activations=[]):
     """creates the forward propagation graph for the neural network """
     net = create_batch_norm_layer(x, layer_sizes[0], activations[0])
     for i in range(1, len(layer_sizes)):
-        net = create_batch_norm_layer(net, layer_sizes[i], activations[i])
+        if i < len(layer_sizes)-1:
+            net = create_batch_norm_layer(net, layer_sizes[i], activations[i])
+        else:
+            net = create_layer(net, layer_sizes[i], activations[i])
     return net
 
 
