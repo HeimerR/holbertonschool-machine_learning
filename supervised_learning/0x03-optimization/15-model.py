@@ -21,10 +21,12 @@ def learning_rate_decay(alpha, decay_rate, global_step, decay_step):
 
 def create_layer(prev, n, activations):
     """ creates a new layer withput nomalization """
-    init = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
-    layer = tf.layers.Dense(n, activation=activation, kernel_initializer=init,
+    initializer = (tf.contrib.layers.
+                   variance_scaling_initializer(mode="FAN_AVG"))
+    layer = tf.layers.Dense(n, activation=activations,
+                            kernel_initializer=initializer,
                             name="layer")
-    return layer
+    return layer(prev)
 
 
 def create_batch_norm_layer(prev, n, activation):
