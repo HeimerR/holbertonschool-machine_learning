@@ -156,5 +156,6 @@ def model(Data_train, Data_valid, layers, activations, alpha=0.001,
                         print("\t\tCost: {}".format(cost_mini))
                         acc_mini = sess.run(accuracy, feed_dict_mini)
                         print("\t\tAccuracy: {}".format(acc_mini))
+            sess.run(tf.assign(global_step, global_step + 1))
         save_path = saver.save(sess, save_path)
     return save_path
