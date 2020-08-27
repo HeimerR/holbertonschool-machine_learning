@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/bin/env python3
 """ Sparse Autoencoder """
 import tensorflow.keras as K
 
@@ -45,10 +45,9 @@ def sparse(input_dims, hidden_layers, latent_dims, lambtha):
     encoder = K.models.Model(inputs=input_encoder, outputs=out_encoder)
     decoder = K.models.Model(inputs=input_decoder, outputs=out_decoder)
 
-    input_auto = K.Input(shape=(input_dims, ))
-    encoderOut = encoder(input_auto)
+    encoderOut = encoder(input_encoder)
     decoderOut = decoder(encoderOut)
-    auto = K.models.Model(inputs=input_auto, outputs=decoderOut)
+    auto = K.models.Model(inputs=input_encoder, outputs=decoderOut)
     auto.compile(optimizer='Adam',
                  loss='binary_crossentropy')
 
