@@ -1,25 +1,35 @@
 #!/usr/bin/env python3
-""" Gradient Descent with L2 Regularization """
+"""Gradient descent with l2 regularization module"""
 import numpy as np
 
 
 def l2_reg_gradient_descent(Y, weights, cache, alpha, lambtha, L):
-    """ updates the weights and biases of a neural network
-    using gradient descent with L2 regularization
     """
-    tmp_W = weights.copy()
+    updates the weights and biases of a neural network using gradient
+    descent with L2 regularization
+        :param Y: one-hot numpy.ndarray of shape (classes, m)
+            that contains the correct labels for the data
+        :param weights: dictionary of the weights and biases
+            of the neural network
+        :param cache: dictionary of the outputs of each layer
+            of the neural network
+        :param alpha: learning rate
+        :param lambtha: regularization parameter
+        :param L: number of layers of the network
+    """
     m = Y.shape[1]
-    for ly in reversed(range(L)):
-        if ly == L-1:
-            dz = cache["A"+str(ly+1)] - Y
-            dw = (np.matmul(cache["A"+str(ly)], dz.T) / m).T
+    weights_c = weights.copy()
+    for i in range(L, 0, -1):
+        A = cache["A{}".format(i)]
+        if i == L:
+            dz = A - Y
         else:
-            d1 = np.matmul(tmp_W["W"+str(ly+2)].T, dzp)
-            d2 = 1-cache["A"+str(ly+1)]**2
-            dz = d1 * d2
-            dw = np.matmul(dz, cache["A"+str(ly)].T) / m
-        dw_reg = dw + (lambtha/m)*tmp_W["W"+str(ly+1)]
+            dz = np.matmul(weights_c["W{}".format(i + 1)].T, dz) \
+                 * A * (1 - A)
+        dw = np.matmul(dz, cache["A{}".format(i - 1)].T) / m
+        dw_l2 = dw + (lambtha / m) * weights_c['W{}'.format(i)]
         db = np.sum(dz, axis=1, keepdims=True) / m
-        weights["W"+str(ly+1)] = (tmp_W["W"+str(ly+1)] - (alpha * dw_reg))
-        weights["b"+str(ly+1)] = tmp_W["b"+str(ly+1)] - alpha * db
-        dzp = dz
+        w = weights_c["W{}".format(i)]
+        b = weights_c["b{}".format(i)]
+        weights["W{}".format(i)] = w - alpha * dw_l2
+        weights["b{}".format(i)] = b - alpha * db
