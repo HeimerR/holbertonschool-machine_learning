@@ -28,16 +28,24 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
             @sw is the stride for the width
         Returns: the output of the convolutional layer
     """
+    m, h_prev, w_prev, c_prev = A_prev.shape
+    """
     m = A_prev.shape[0]
     h_prev = A_prev.shape[1]
     w_prev = A_prev.shape[2]
     c_prev = A_prev.shape[3]
+    """
+    kh, kw, _, c_new = W.shape
+    """
     kh = W.shape[0]
     kw = W.shape[1]
-    c_new = W.shape[3]
+    """
+    # c_new = W.shape[3]
+    sh, sw = stride
+    """
     sh = stride[0]
     sw = stride[1]
-
+    """
     if padding == 'valid':
         ph = 0
         pw = 0
