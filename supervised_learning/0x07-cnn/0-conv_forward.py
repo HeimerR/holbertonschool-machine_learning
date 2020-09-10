@@ -57,7 +57,6 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
                         mode='constant', constant_values=0)
 
     conv = np.zeros((m, conv_h, conv_w, c_new))
-    # img = np.arange(m)
     for j in range(conv_h):
         for i in range(conv_w):
             for k in range(c_new):
