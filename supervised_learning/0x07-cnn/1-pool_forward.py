@@ -24,14 +24,9 @@ def pool_forward(A_prev, kernel_shape, stride=(1, 1), mode='max'):
         indicating whether to perform maximum or average pooling, respectively
     Returns: the output of the pooling layer
     """
-    m = A_prev.shape[0]
-    h_prev = A_prev.shape[1]
-    w_prev = A_prev.shape[2]
-    c_prev = A_prev.shape[3]
-    kh = kernel_shape[0]
-    kw = kernel_shape[1]
-    sh = stride[0]
-    sw = stride[1]
+    m, h_prev, w_prev, c_prev = A_prev.shape
+    kh, kw = kernel_shape
+    sh, sw = stride
     out_h = int(((h_prev-kh)/sh) + 1)
     out_w = int(((w_prev-kw)/sw) + 1)
     conv = np.zeros((m, out_h, out_w, c_prev))
