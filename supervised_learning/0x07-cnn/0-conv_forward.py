@@ -29,23 +29,9 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         Returns: the output of the convolutional layer
     """
     m, h_prev, w_prev, c_prev = A_prev.shape
-    """
-    m = A_prev.shape[0]
-    h_prev = A_prev.shape[1]
-    w_prev = A_prev.shape[2]
-    c_prev = A_prev.shape[3]
-    """
     kh, kw, _, c_new = W.shape
-    """
-    kh = W.shape[0]
-    kw = W.shape[1]
-    """
-    # c_new = W.shape[3]
     sh, sw = stride
-    """
-    sh = stride[0]
-    sw = stride[1]
-    """
+
     if padding == 'valid':
         ph = 0
         pw = 0
@@ -58,16 +44,6 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         ph = int(np.ceil(((sh*h_prev) - sh + kh - h_prev) / 2))
         pw = int(np.ceil(((sw*w_prev) - sw + kw - w_prev) / 2))
 
-        """
-        if kh % 2 == 0:
-            ph = int(((h_prev)*sh+kh-h_prev)/2)
-        else:
-            ph = int(((h_prev-1)*sh+kh-h_prev)/2)
-        if kw % 2 == 0:
-            pw = int(((w_prev)*sw+kw-w_prev)/2)
-        else:
-            pw = int(((w_prev-1)*sw+kw-w_prev)/2)
-        """
         A_prev = np.pad(A_prev, pad_width=((0, 0),
                         (ph, ph), (pw, pw), (0, 0)),
                         mode='constant', constant_values=0)
