@@ -5,7 +5,7 @@ from gensim.test.utils import common_texts
 
 
 def word2vec_model(sentences, size=100, min_count=5, window=5,
-                   negative=5, cbow=True, iterations=5, seed=0):
+                   negative=5, cbow=True, iterations=5, seed=0, workers=1):
     """ creates and trains a genism word2vec model:
 
         - sentences is a list of sentences to be trained on
@@ -25,7 +25,7 @@ def word2vec_model(sentences, size=100, min_count=5, window=5,
 
     model = Word2Vec(sentences, size=size, window=window,
                      min_count=min_count, negative=negative,
-                     sg=cbow, seed=seed, iter=iterations)
+                     sg=cbow, seed=seed, iter=iterations, workers=workers)
     model.train(sentences, total_examples=model.corpus_count,
                 epochs=model.epochs)
     return model
