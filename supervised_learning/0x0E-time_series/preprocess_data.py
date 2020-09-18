@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Time Series Forecasting - preprocess"""
 import numpy as np
-import pandas as pd
+# import pandas as pd
 
 
 def preprocessor(datafile, days):
