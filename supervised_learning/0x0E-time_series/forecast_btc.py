@@ -105,7 +105,7 @@ if __name__ == '__main__':
     preprocess = __import__('preprocess_data').preprocessor
 
     txt = './coinbaseUSD_1-min_data_2014-12-01_to_2019-01-09.csv'
-    df_W df_mul, = preprocess(txt, 730)
+    df_W, df_mul = preprocess(txt, 730)
     df = df_W.values
 
     TRAIN_SPLIT = int(days * 0.8 * 24)  # length of training dataset
