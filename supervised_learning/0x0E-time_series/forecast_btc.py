@@ -54,7 +54,7 @@ def univariate_data(
 
 
 def univariate():
-
+    """ univariate """
     univariate_past_history = 24
     univariate_future_target = 0
 
@@ -73,7 +73,7 @@ def univariate():
 
 
 def multivariate():
-
+    """ multivariate """
     df_mul.plot(subplots=True)
     dataset = df_mul.values
     data_mean = dataset[:TRAIN_SPLIT].mean(axis=0)
