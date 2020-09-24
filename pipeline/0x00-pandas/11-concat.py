@@ -9,6 +9,6 @@ df2 = from_file('bitstampUSD_1-min_data_2012-01-01_to_2020-04-22.csv', ',')
 df1.set_index('Timestamp')
 df2.set_index('Timestamp')
 
-df = pd.concat([df2, df1], keys=["bitstamp", "coinbase"])
+df = pd.concat([df2, df1], keys=["bitstamp", "coinbase"], ignore_index=True)
 
 print(df)
