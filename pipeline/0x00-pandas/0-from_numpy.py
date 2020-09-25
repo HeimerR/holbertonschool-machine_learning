@@ -13,5 +13,5 @@ def from_numpy(array):
         Returns: the newly created pd.DataFrame
     """
     col = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-    col_fit  = col[:array.shape[1]]
+    col_fit = col[:array.shape[1]]
     return pd.DataFrame(array, columns=col_fit)

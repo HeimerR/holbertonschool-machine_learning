@@ -13,6 +13,5 @@ df["Volume_(Currency)"].fillna(value=0, inplace=True)
 df["High"].fillna(value=df.Close.shift(1, axis=0), inplace=True)
 df["Low"].fillna(value=df.Close.shift(1, axis=0), inplace=True)
 df["Open"].fillna(value=df.Close.shift(1, axis=0), inplace=True)
-#df[col] = df[col].loc[df[col].isna]
 print(df.head())
 print(df.tail())
