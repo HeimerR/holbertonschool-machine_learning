@@ -2,6 +2,7 @@
 """ Can I join? """
 import requests
 
+
 def availableShips(passengerCount):
     """  returns the list of ships that can hold a
          given number of passengers
@@ -11,7 +12,7 @@ def availableShips(passengerCount):
 
     url = "https://swapi-api.hbtn.io/api/starships/"
     ships = []
-    while url != None:
+    while url is not None:
         r = requests.get(url)
         results = r.json()["results"]
         for ship in results:

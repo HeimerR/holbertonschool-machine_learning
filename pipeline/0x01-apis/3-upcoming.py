@@ -12,7 +12,7 @@ if __name__ == '__main__':
     for i, launch in enumerate(launches):
         if date > launch["date_unix"]:
             date = launch["date_unix"]
-            index = i;
+            index = i
     n = launches[i]["name"]
     d = launches[i]["date_local"]
     r_id = launches[i]["rocket"]
@@ -23,4 +23,4 @@ if __name__ == '__main__':
     lp = requests.get(url).json()
     lp_name = lp["name"]
     lp_loc = lp["locality"]
-    print(n+" ("+d+") "+r_name+" - "+lp_name+" ("+lp_loc+")")
+    print(n + " (" + d + ") " + r_name + " - " + lp_name + " (" + lp_loc + ")")
