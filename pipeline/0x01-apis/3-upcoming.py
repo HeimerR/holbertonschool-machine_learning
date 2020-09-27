@@ -18,7 +18,7 @@ if __name__ == '__main__':
     r_id = launches[index]["rocket"]
     url = "https://api.spacexdata.com/v4/rockets/{}".format(r_id)
     r_name = requests.get(url).json()["name"]
-    lp_id = launches[i]["launchpad"]
+    lp_id = launches[index]["launchpad"]
     url = "https://api.spacexdata.com/v4/launchpads/{}".format(lp_id)
     lp = requests.get(url).json()
     lp_name = lp["name"]
