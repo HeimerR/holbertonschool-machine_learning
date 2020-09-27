@@ -13,9 +13,9 @@ if __name__ == '__main__':
         if date > launch["date_unix"]:
             date = launch["date_unix"]
             index = i
-    n = launches[i]["name"]
-    d = launches[i]["date_local"]
-    r_id = launches[i]["rocket"]
+    n = launches[index]["name"]
+    d = launches[index]["date_local"]
+    r_id = launches[index]["rocket"]
     url = "https://api.spacexdata.com/v4/rockets/{}".format(r_id)
     r_name = requests.get(url).json()["name"]
     lp_id = launches[i]["launchpad"]
