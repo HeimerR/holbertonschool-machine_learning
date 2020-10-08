@@ -10,6 +10,6 @@ def flip_image(image):
 
         Returns the flipped image
     """
-    flip = tf.image.flip_left_right(x)
+    flip = tf.image.flip_left_right(image)
     return flip
 
