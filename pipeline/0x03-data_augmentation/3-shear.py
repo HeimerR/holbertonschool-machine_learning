@@ -11,5 +11,6 @@ def shear_image(image, intensity):
 
         Returns the sheared image
     """
-    sheared_img = tf.keras.preprocessing.image.random_shear(image, 15)
+    img = tf.keras.preprocessing.image.img_to_array(image)
+    sheared_img = tf.keras.preprocessing.image.random_shear(img, intensity)
     return sheared_img
