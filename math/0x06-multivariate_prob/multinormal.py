@@ -36,34 +36,22 @@ class MultiNormal:
         self.cov = np.matmul(cov.T, cov)/(n - 1)
 
     def pdf(self, x):
-        """ x is a numpy.ndarray of shape (d, 1) containing the data point
-            whose PDF should be calculated
-
-                - d is the number of dimensions of the Multinomial instance
-
-            If x is not a numpy.ndarray, raise a TypeError with the message:
-            "x must by a numpy.ndarray"
-            If x is not of shape (d, 1), raise a ValueError with the message:
-            "x mush have the shape ({d}, 1)"
-
-        Returns the value of the PDF
-        """
-        if not isinstance(x, np.ndarray):
+        """public instance method that calculates the PDF at a data point"""
+        if type(x) is not np.ndarray:
             raise TypeError("x must be a numpy.ndarray")
-        d = self.cov.shape[0]
-        if len(x.shape) != 2 or x.shape[1] != 1 or x.shape[0] != d:
-            raise ValueError("x must have the shape ({}, 1)".format(d))
-
-        # pdf formula -- multivar
-
-        det = np.linalg.det(self.cov)
-        inv = np.linalg.inv(self.cov)
-        f1 = 1 / np.sqrt(((2*np.pi)**d)*det)
-        f21 = -(x-self.mean).T
-        f22 = np.matmul(f21, inv)
-        f23 = (x - self.mean) / 2
-        f24 = np.matmul(f22, f23)
-        f2 = np.exp(f24)
-        pdf = f1 * f2
-
-        return pdf.reshape(-1)[0]
+        d = self.mean.shape[0]
+        if len(x.shape) != 2:
+            str = 'x must have the shape ({}, 1)'.format(d)
+            raise ValueError(str)
+        if x.shape[0] != d or x.shape[1] != 1:
+            str = 'x must have the shape ({}, 1)'.format(d)
+            raise ValueError(str)
+        const = 1 / np.sqrt(((2 * np.pi) ** d) * (np.linalg.det(self.cov)))
+        n_dev = -(x - self.mean).T
+        ins = np.matmul(n_dev,  np.linalg.inv(self.cov))
+        half_dev = (x - self.mean) / 2
+        out = np.matmul(ins, half_dev)
+        exp = np.exp(out)
+        pdf = const * exp
+        pdf = pdf.reshape(-1)[0]
+        return pdf
