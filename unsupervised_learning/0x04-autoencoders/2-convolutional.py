@@ -77,8 +77,6 @@ def autoencoder(input_dims, filters, latent_dims):
     encoder = K.models.Model(inputs=input_encoder, outputs=out_encoder)
     decoder = K.models.Model(inputs=input_decoder, outputs=out_decoder)
 
-    encoder.summary()
-    decoder.summary()
     input_auto = K.Input(shape=input_dims)
     encoderOut = encoder(input_auto)
     decoderOut = decoder(encoderOut)
