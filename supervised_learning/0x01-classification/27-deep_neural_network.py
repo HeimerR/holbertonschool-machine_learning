@@ -7,7 +7,7 @@ import pickle
 
 class DeepNeuralNetwork:
     """ class DeepNeuralNetwork """
-    def __init__(self, nx, layers, activation='sig'):
+    def __init__(self, nx, layers):
         """ init DeepNeuralNetwork """
         if type(nx) != int:
             raise TypeError('nx must be an integer')
@@ -15,27 +15,22 @@ class DeepNeuralNetwork:
             raise ValueError('nx must be a positive integer')
         if type(layers) != list:
             raise TypeError('layers must be a list of positive integers')
-        if len(layers) == 0:
+        if not all(n > 0 for n in layers):
             raise TypeError('layers must be a list of positive integers')
-        if activation != 'sig' and activation != 'tanh':
-            raise ValueError("activation must be 'sig' or 'tanh'")
         self.nx = nx
         self.layers = layers
         self.__L = len(layers)
-        self.__activation = activation
         self.__cache = {}
         self.__weights = {}
-        for ly in range(self.L):
-            if type(layers[ly]) != int or layers[ly] <= 0:
-                raise TypeError('layers must be a list of positive integers')
-            self.weights["b"+str(ly+1)] = np.zeros((layers[ly], 1))
+        for ly in range(self.__L):
+            self.__weights["b"+str(ly+1)] = np.zeros((layers[ly], 1))
             if ly == 0:
                 heetal = np.random.randn(layers[ly], nx) * np.sqrt(2/nx)
-                self.weights["W"+str(ly+1)] = heetal
+                self.__weights["W"+str(ly+1)] = heetal
             else:
                 factor = np.sqrt(2/layers[ly-1])
                 heetal = np.random.randn(layers[ly], layers[ly-1]) * factor
-                self.weights["W" + str(ly+1)] = heetal
+                self.__weights["W"+str(ly+1)] = heetal
 
     @property
     def L(self):
@@ -52,11 +47,6 @@ class DeepNeuralNetwork:
         """ hold all weights and biased of the network """
         return self.__weights
 
-    @property
-    def activation(self):
-        """ type of activation function used in the hidden layers """
-        return self.__activation
-
     def forward_prop(self, X):
         """ Calculates the forward propagation of the neural network """
         self.__cache["A0"] = X
@@ -69,10 +59,7 @@ class DeepNeuralNetwork:
                 self.__cache["A"+str(ly+1)] = (t/np.sum(t, axis=0,
                                                keepdims=True))
             else:
-                if self.__activation == 'sig':
-                    self.__cache["A"+str(ly+1)] = 1/(1+np.exp(-Z))
-                else:
-                    self.__cache["A"+str(ly+1)] = np.tanh(Z)
+                self.__cache["A"+str(ly+1)] = 1/(1+np.exp(-Z))
 
         return self.__cache["A"+str(self.__L)], self.__cache
 
@@ -98,11 +85,8 @@ class DeepNeuralNetwork:
                 dw = np.matmul(self.__cache["A"+str(ly)], dz.T) / m
             else:
                 d1 = np.matmul(tmp_W["W"+str(ly+2)].T, dzp)
-                if self.__activation == 'sig':
-                    d2 = (self.__cache["A"+str(ly+1)] *
-                          (1-self.__cache["A"+str(ly+1)]))
-                else:
-                    d2 = 1-self.__cache["A"+str(ly+1)]**2
+                d2 = (self.__cache["A"+str(ly+1)] *
+                      (1-self.__cache["A"+str(ly+1)]))
                 dz = d1 * d2
                 dw = np.matmul(dz, self.__cache["A"+str(ly)].T) / m
             db = np.sum(dz, axis=1, keepdims=True) / m
