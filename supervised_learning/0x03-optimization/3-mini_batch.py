@@ -1,73 +1,60 @@
 #!/usr/bin/env python3
-"""
-    Optimization project
-"""
+""" Mini-Batch """
 import tensorflow as tf
 shuffle_data = __import__('2-shuffle_data').shuffle_data
 
 
-def train_mini_batch(X_train, Y_train, X_valid, Y_valid,
-                     batch_size=32, epochs=5, load_path="/tmp/model.ckpt",
+def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32,
+                     epochs=5, load_path="/tmp/model.ckpt",
                      save_path="/tmp/model.ckpt"):
-    """ Shuffles data points in two matrices the same way
-        X_train is ndarray with shape (m, 784) containing traning data
-            m number of data points
-            784 is number of features
-        Y_train is ndarray with shape (m, 10) containing training labels
-            m number of data points
-            10 number of classes
-        X_valid (m, 784) contains validation data
-        Y_valid is one-hot (m, 10), validation labels
-        batch_size
-        epochs is # of times training passes through whole dataset
-        load_path/save_path where model stored
-        Returns: path where saved
-        allow for smaller final batch
-        shuffle training data before each epoch
-    """
+    """ trains a loaded neural network model using mini-batch GD """
     with tf.Session() as sess:
-        saver = tf.train.import_meta_graph("{}.meta".format(load_path))
+        saver = tf.train.import_meta_graph(load_path + ".meta")
         saver.restore(sess, load_path)
-        m = X_train.shape[0]
-        batches = m // batch_size
-        if m % batch_size != 0:
-            batches = int(batches) + 1
-        x = tf.get_collection('x')[0]
-        y = tf.get_collection('y')[0]
-        accuracy = tf.get_collection('accuracy')[0]
-        loss = tf.get_collection('loss')[0]
-        train_op = tf.get_collection('train_op')[0]
-        for i in range(epochs + 1):
-            train_cost = loss.eval({x: X_train,
-                                    y: Y_train})
-            train_accuracy = accuracy.eval({x: X_train,
-                                            y: Y_train})
-            valid_cost = loss.eval({x: X_valid,
-                                    y: Y_valid})
-            valid_accuracy = accuracy.eval({x: X_valid,
-                                            y: Y_valid})
-            print("After {} epochs:\n".format(i) +
-                  "\tTraining Cost: {}\n".format(train_cost) +
-                  "\tTraining Accuracy: {}\n".format(train_accuracy) +
-                  "\tValidation Cost: {}\n".format(valid_cost) +
-                  "\tValidation Accuracy: {}\n".format(valid_accuracy))
-            if i == epochs:
-                ''' Done training, last epoch metrics printed '''
-                break
-            shuf_x, shuf_y = shuffle_data(X_train, Y_train)
-            for j in range(batches):
-                start = batch_size * j
-                end = batch_size * (j + 1)
-                '''if end > m:
-                    end = -1'''
-                sess.run(train_op, feed_dict={x: shuf_x[start:end],
-                                              y: shuf_y[start:end]})
-                if (j + 1) % 100 == 0 and j != 0:
-                    step_cost = loss.eval({x: shuf_x[start:end],
-                                           y: shuf_y[start:end]})
-                    step_accuracy = accuracy.eval({x: shuf_x[start:end],
-                                                   y: shuf_y[start:end]})
-                    print("\tStep {}:\n".format(j + 1) +
-                          "\t\tCost: {}\n".format(step_cost) +
-                          "\t\tAccuracy: {}\n".format(step_accuracy))
-        return saver.save(sess, save_path)
+
+        x = tf.get_collection("x")[0]
+        y = tf.get_collection("y")[0]
+        loss = tf.get_collection("loss")[0]
+        accuracy = tf.get_collection("accuracy")[0]
+        train_op = tf.get_collection("train_op")[0]
+
+        feed_dict_t = {x: X_train, y: Y_train}
+        feed_dict_v = {x: X_valid, y: Y_valid}
+        float_iterations = X_train.shape[0]/batch_size
+        iterations = int(float_iterations)
+        if float_iterations > iterations:
+            iterations = int(float_iterations) + 1
+            extra = True
+        else:
+            extra = False
+        for epoch in range(epochs + 1):
+            cost_t = sess.run(loss, feed_dict_t)
+            acc_t = sess.run(accuracy, feed_dict_t)
+            cost_v = sess.run(loss, feed_dict_v)
+            acc_v = sess.run(accuracy, feed_dict_v)
+            print("After {} epochs:".format(epoch))
+            print("\tTraining Cost: {}".format(cost_t))
+            print("\tTraining Accuracy: {}".format(acc_t))
+            print("\tValidation Cost: {}".format(cost_v))
+            print("\tValidation Accuracy: {}".format(acc_v))
+            if epoch < epochs:
+                X_shuffled, Y_shuffled = shuffle_data(X_train, Y_train)
+                for step in range(iterations):
+                    start = step*batch_size
+                    if step == iterations - 1 and extra:
+                        end = (int(step*batch_size +
+                               (float_iterations - iterations + 1) *
+                                batch_size))
+                    else:
+                        end = step*batch_size + batch_size
+                    feed_dict_mini = {x: X_shuffled[start: end],
+                                      y: Y_shuffled[start: end]}
+                    sess.run(train_op, feed_dict_mini)
+                    if step != 0 and (step + 1) % 100 == 0:
+                        print("\tStep {}:".format(step + 1))
+                        cost_mini = sess.run(loss, feed_dict_mini)
+                        print("\t\tCost: {}".format(cost_mini))
+                        acc_mini = sess.run(accuracy, feed_dict_mini)
+                        print("\t\tAccuracy: {}".format(acc_mini))
+        save_path = saver.save(sess, save_path)
+    return save_path
